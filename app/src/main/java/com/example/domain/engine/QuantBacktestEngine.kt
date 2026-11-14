@@ -52,33 +52,81 @@ object QuantBacktestEngine {
         )
     }
 
-    private data class SimSummary(
+    data class SimSummary(
         val trades: Int,
         val winRatePct: Double,
         val profitFactor: Double,
         val expectancyR: Double,
         val maxDrawdownPct: Double,
-        val netReturnPct: Double
+        val netReturnPct: Double,
+        val inSampleExpectancyR: Double = 0.0,
+        val outSampleExpectancyR: Double = 0.0,
+        val walkForwardPassed: Boolean = false
     )
+
+    fun runParameterizedSimulation(
+        candles: List<Candle>,
+        spreadPct: Double = 0.04,
+        slippagePct: Double = 0.02,
+        riskPerTradePct: Double = 1.0,
+        fastEma: Int = 10,
+        slowEma: Int = 21,
+        atrStopMult: Double = 1.4,
+        atrTargetMult: Double = 2.2,
+        requireRsiFilter: Boolean = false,
+        maxHoldBars: Int = 14
+    ): SimSummary {
+        if (candles.size < max(40, slowEma + 15)) return SimSummary(0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        val costFraction = (spreadPct + slippagePct) / 100.0
+        val splitIndex = (candles.size * 0.7).toInt()
+        val inSample = simulateSlice(
+            candles.subList(0, splitIndex), costFraction, riskPerTradePct,
+            fastEma, slowEma, atrStopMult, atrTargetMult, requireRsiFilter, maxHoldBars
+        )
+        val outSample = simulateSlice(
+            candles.subList(max(0, splitIndex - slowEma - 2), candles.size), costFraction, riskPerTradePct,
+            fastEma, slowEma, atrStopMult, atrTargetMult, requireRsiFilter, maxHoldBars
+        )
+        val full = simulateSlice(
+            candles, costFraction, riskPerTradePct,
+            fastEma, slowEma, atrStopMult, atrTargetMult, requireRsiFilter, maxHoldBars
+        )
+        val wfPassed = outSample.trades >= 2 &&
+            outSample.expectancyR > 0.0 &&
+            inSample.expectancyR > -0.2
+        return full.copy(
+            inSampleExpectancyR = inSample.expectancyR,
+            outSampleExpectancyR = outSample.expectancyR,
+            walkForwardPassed = wfPassed
+        )
+    }
 
     private fun simulateSlice(
         candles: List<Candle>,
         costFraction: Double,
-        riskPct: Double
+        riskPct: Double,
+        fastEmaPeriod: Int = 10,
+        slowEmaPeriod: Int = 21,
+        atrStopMult: Double = 1.4,
+        atrTargetMult: Double = 2.2,
+        requireRsiFilter: Boolean = false,
+        maxHoldBars: Int = 14
     ): SimSummary {
-        if (candles.size < 25) return SimSummary(0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        val warmup = max(21, slowEmaPeriod + 1)
+        if (candles.size < warmup + 5) return SimSummary(0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
         var equity = 100.0
         var peakEquity = 100.0
         var maxDrawdown = 0.0
         val rResults = mutableListOf<Double>()
 
-        var i = 21
+        var i = warmup
         while (i < candles.size - 2) {
-            // Compute EMA20 strictly using bars <= i (zero future data!)
+            // Compute EMAs strictly using bars <= i (zero future data!)
             val window = candles.subList(0, i + 1)
-            val emaFast = ema(window.map { it.close }, 10)
-            val emaSlow = ema(window.map { it.close }, 21)
+            val closes = window.map { it.close }
+            val emaFast = ema(closes, fastEmaPeriod)
+            val emaSlow = ema(closes, slowEmaPeriod)
             val prevClose = candles[i - 1].close
             val currClose = candles[i].close
             val atr = avgRange(window.takeLast(14))
@@ -87,20 +135,28 @@ object QuantBacktestEngine {
                 continue
             }
 
-            val bullCross = emaFast > emaSlow && currClose > emaFast && prevClose <= emaFast
-            val bearCross = emaFast < emaSlow && currClose < emaFast && prevClose >= emaFast
+            val rsiOkBull = if (!requireRsiFilter) true else TechnicalAnalysisEngine.computeRsi(closes, 14) in 45.0..68.0
+            val rsiOkBear = if (!requireRsiFilter) true else TechnicalAnalysisEngine.computeRsi(closes, 14) in 32.0..55.0
+
+            val bullCross = emaFast > emaSlow && currClose > emaFast && prevClose <= emaFast && rsiOkBull
+            val bearCross = emaFast < emaSlow && currClose < emaFast && prevClose >= emaFast && rsiOkBear
 
             if (bullCross || bearCross) {
                 // Enter at next bar's open + realistic transaction cost
                 val nextOpen = candles[i + 1].open
                 val entry = if (bullCross) nextOpen * (1.0 + costFraction) else nextOpen * (1.0 - costFraction)
-                val stop = if (bullCross) entry - atr * 1.4 else entry + atr * 1.4
-                val target = if (bullCross) entry + atr * 2.2 else entry - atr * 2.2
+                val stop = if (bullCross) entry - atr * atrStopMult else entry + atr * atrStopMult
+                val target = if (bullCross) entry + atr * atrTargetMult else entry - atr * atrTargetMult
                 val riskDist = abs(entry - stop)
-                var exitBar = min(candles.size - 1, i + 12)
+                if (riskDist <= 0.0) {
+                    i++
+                    continue
+                }
+                var exitBar = min(candles.size - 1, i + maxHoldBars)
                 var realizedR = 0.0
 
-                for (j in (i + 1) until min(candles.size, i + 15)) {
+                val endLoop = min(candles.size, i + maxHoldBars + 1)
+                for (j in (i + 1) until endLoop) {
                     val bar = candles[j]
                     if (bullCross) {
                         if (bar.low <= stop) {
@@ -125,7 +181,7 @@ object QuantBacktestEngine {
                             break
                         }
                     }
-                    if (j == min(candles.size - 1, i + 14)) {
+                    if (j == endLoop - 1) {
                         val exitPrice = if (bullCross) bar.close * (1.0 - costFraction) else bar.close * (1.0 + costFraction)
                         realizedR = if (bullCross) (exitPrice - entry) / riskDist else (entry - exitPrice) / riskDist
                         exitBar = j

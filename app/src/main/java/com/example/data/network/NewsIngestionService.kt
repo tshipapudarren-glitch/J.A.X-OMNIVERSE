@@ -1,6 +1,7 @@
 package com.example.data.network
 
 import android.util.Xml
+import com.example.domain.model.CentralBankFeedStatus
 import com.example.domain.model.EconomicCalendarItem
 import com.example.domain.model.FredMacroIndicator
 import com.example.domain.model.NewsArticleItem
@@ -47,12 +48,15 @@ class NewsIngestionService(
         .build()
 ) {
 
-    private data class FeedSource(val name: String, val url: String)
+    private data class FeedSource(val name: String, val url: String, val bankCode: String? = null)
 
     private val defaultFeeds = listOf(
-        FeedSource("Federal Reserve", "https://www.federalreserve.gov/feeds/press_all.xml"),
-        FeedSource("European Central Bank", "https://www.ecb.europa.eu/rss/press.html"),
-        FeedSource("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss/")
+        FeedSource("Federal Reserve", "https://www.federalreserve.gov/feeds/press_all.xml", "FED"),
+        FeedSource("European Central Bank", "https://www.ecb.europa.eu/rss/press.html", "ECB"),
+        FeedSource("Bank of England", "https://www.bankofengland.co.uk/rss/news", "BOE"),
+        FeedSource("Bank of Japan", "https://www.boj.or.jp/en/rss/whatsnew.xml", "BOJ"),
+        FeedSource("Swiss National Bank", "https://www.snb.ch/en/mmr/rss/rss_all/xml", "SNB"),
+        FeedSource("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss/", null)
     )
 
     suspend fun fetchLiveNews(): NewsFetchResult = withContext(Dispatchers.IO) {
@@ -259,7 +263,10 @@ class NewsIngestionService(
         if (fredKey != null) {
             val coreSeries = listOf(
                 Triple("FEDFUNDS", "Fed Funds Effective Rate", "%"),
+                Triple("DGS2", "US 2Y Treasury Yield", "%"),
+                Triple("DGS5", "US 5Y Treasury Yield", "%"),
                 Triple("DGS10", "US 10Y Treasury Yield", "%"),
+                Triple("DGS30", "US 30Y Treasury Yield", "%"),
                 Triple("T10Y2Y", "10Y-2Y Yield Curve Spread", "%"),
                 Triple("UNRATE", "US Unemployment Rate", "%")
             )
@@ -385,6 +392,40 @@ class NewsIngestionService(
         return items
     }
 
+    fun buildCentralBankStatuses(
+        articles: List<NewsArticleItem>,
+        macroIndicators: List<FredMacroIndicator>
+    ): List<CentralBankFeedStatus> {
+        val fedFunds = macroIndicators.firstOrNull { it.seriesId == "FEDFUNDS" }?.value ?: "FRED N/A"
+        val specs = listOf(
+            Triple("FED", "Federal Reserve (FOMC)", "USD" to "Federal Reserve"),
+            Triple("ECB", "European Central Bank (ECB)", "EUR" to "European Central Bank"),
+            Triple("BOE", "Bank of England (BoE)", "GBP" to "Bank of England"),
+            Triple("BOJ", "Bank of Japan (BoJ)", "JPY" to "Bank of Japan"),
+            Triple("SNB", "Swiss National Bank (SNB)", "CHF" to "Swiss National Bank")
+        )
+        return specs.map { (code, fullName, curSource) ->
+            val (currency, sourceKey) = curSource
+            val matched = articles.firstOrNull { it.sourceName == sourceKey }
+            val tone = when {
+                matched == null -> "NO_FEED_DATA"
+                "HAWKISH" in matched.sentimentLabel || "POSITIVE" in matched.sentimentLabel -> "HAWKISH"
+                "CAUTIOUS" in matched.sentimentLabel || "RISK-OFF" in matched.sentimentLabel -> "DOVISH / CAUTIOUS"
+                else -> "NEUTRAL"
+            }
+            CentralBankFeedStatus(
+                bankCode = code,
+                bankName = fullName,
+                currency = currency,
+                latestReleaseTitle = matched?.title ?: "No live RSS release synced yet — tap Sync Central Banks",
+                latestReleaseDate = matched?.publishedAt ?: "--",
+                inferredTone = tone,
+                sourceUrl = matched?.articleUrl.orEmpty(),
+                rateSeriesValue = if (code == "FED") fedFunds else "Track RSS/Calendar"
+            )
+        }
+    }
+
     private fun mapAffectedInstruments(text: String, sourceName: String): List<String> {
         val list = mutableSetOf<String>()
         if ("bitcoin" in text || "btc" in text || "crypto" in text || sourceName == "CoinDesk") {
@@ -399,6 +440,17 @@ class NewsIngestionService(
         if ("ecb" in text || "euro" in text || sourceName == "European Central Bank") {
             list += "EUR-USD"
             list += "GBP-USD"
+        }
+        if ("bank of england" in text || "boe" in text || "sterling" in text || "mpc" in text || sourceName == "Bank of England") {
+            list += "GBP-USD"
+            list += "EUR-USD"
+        }
+        if ("bank of japan" in text || "boj" in text || "yen" in text || sourceName == "Bank of Japan") {
+            list += "USD-JPY"
+        }
+        if ("swiss national bank" in text || "snb" in text || "franc" in text || sourceName == "Swiss National Bank") {
+            list += "USD-CHF"
+            list += "EUR-USD"
         }
         if ("gold" in text || "xau" in text || "bullion" in text) {
             list += "PAXG-USD"

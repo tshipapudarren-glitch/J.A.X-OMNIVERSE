@@ -165,6 +165,7 @@ fun JaxTerminalApp(
             WorkspaceDrawerContent(
                 selectedWorkspace = uiState.selectedWorkspace,
                 operatorName = profile?.displayName ?: "Authenticated Operator",
+                operatorEmail = uiState.operatorEmail,
                 executionMode = if (profile?.emergencyStop == true) "EMERGENCY STOP" else (profile?.executionMode ?: "ANALYSIS_ONLY"),
                 emergencyStop = profile?.emergencyStop == true,
                 onSelectWorkspace = { dest ->
@@ -172,6 +173,12 @@ fun JaxTerminalApp(
                     if (!isExpanded) {
                         scope.launch { drawerState.close() }
                     }
+                },
+                onSignOut = {
+                    if (!isExpanded) {
+                        scope.launch { drawerState.close() }
+                    }
+                    onSignOutAction()
                 }
             )
         }
@@ -297,6 +304,7 @@ fun JaxTerminalApp(
                                     alerts = alerts,
                                     onRunScan = { viewModel.runOmniscanner() },
                                     onFetchNews = { viewModel.fetchLiveNews() },
+                                    onGenerateExecutiveBriefing = { viewModel.generateDailyBriefing() },
                                     onToggleEmergencyStop = { viewModel.toggleEmergencyStop() },
                                     onSelectInstrument = { viewModel.selectInstrument(it) },
                                     onNavigate = { viewModel.selectWorkspace(it) }
@@ -322,7 +330,8 @@ fun JaxTerminalApp(
                                     onSelectTimeframe = { viewModel.selectTimeframe(it) },
                                     onRunScan = { viewModel.runOmniscanner() },
                                     onSelectInstrument = { viewModel.selectInstrument(it) },
-                                    onGenerateSetup = { viewModel.generateSetupForSelected() }
+                                    onGenerateSetup = { viewModel.generateSetupForSelected() },
+                                    onUpdateScannerCriteria = { viewModel.updateScannerCriteria(it) }
                                 )
 
                                 WorkspaceDestination.OMNISCANNER -> OpportunityRadarAndScannerScreen(
@@ -331,7 +340,8 @@ fun JaxTerminalApp(
                                     onSelectTimeframe = { viewModel.selectTimeframe(it) },
                                     onRunScan = { viewModel.runOmniscanner() },
                                     onSelectInstrument = { viewModel.selectInstrument(it) },
-                                    onGenerateSetup = { viewModel.generateSetupForSelected() }
+                                    onGenerateSetup = { viewModel.generateSetupForSelected() },
+                                    onUpdateScannerCriteria = { viewModel.updateScannerCriteria(it) }
                                 )
 
                                 WorkspaceDestination.SETUP_GENERATOR -> SetupGeneratorScreen(
@@ -371,7 +381,8 @@ fun JaxTerminalApp(
                                     instruments = instruments,
                                     investigations = investigations,
                                     onSelectInstrument = { viewModel.selectInstrument(it) },
-                                    onRunCouncil = { viewModel.runMultiAiInvestigation() }
+                                    onRunCouncil = { viewModel.runMultiAiInvestigation() },
+                                    onRunTribunal = { viewModel.runSupremeTribunal() }
                                 )
 
                                 WorkspaceDestination.MULTI_AI_COUNCIL -> MultiAiCouncilAndBureauScreen(
@@ -380,17 +391,20 @@ fun JaxTerminalApp(
                                     instruments = instruments,
                                     investigations = investigations,
                                     onSelectInstrument = { viewModel.selectInstrument(it) },
-                                    onRunCouncil = { viewModel.runMultiAiInvestigation() }
+                                    onRunCouncil = { viewModel.runMultiAiInvestigation() },
+                                    onRunTribunal = { viewModel.runSupremeTribunal() }
                                 )
 
                                 WorkspaceDestination.LIQUIDITY_INTELLIGENCE -> LiquidityAndDnaScreen(
                                     isLiquidityView = true,
-                                    uiState = uiState
+                                    uiState = uiState,
+                                    onScanFingerprints = { viewModel.scanPatternFingerprints() }
                                 )
 
                                 WorkspaceDestination.MARKET_DNA_LAB -> LiquidityAndDnaScreen(
                                     isLiquidityView = false,
-                                    uiState = uiState
+                                    uiState = uiState,
+                                    onScanFingerprints = { viewModel.scanPatternFingerprints() }
                                 )
 
                                 WorkspaceDestination.NEWS_INTELLIGENCE -> NewsAndCalendarScreen(
@@ -398,7 +412,9 @@ fun JaxTerminalApp(
                                     uiState = uiState,
                                     onFetchLiveNews = { viewModel.fetchLiveNews() },
                                     onFetchCalendar = { viewModel.fetchEconomicCalendar() },
-                                    onGenerateDailyBriefing = { viewModel.generateDailyBriefing() }
+                                    onGenerateDailyBriefing = { viewModel.generateDailyBriefing() },
+                                    onInvestigateNews = { viewModel.investigateNewsArticle(it) },
+                                    onAnalyzeCentralBanks = { viewModel.analyzeCentralBanksWithAi() }
                                 )
 
                                 WorkspaceDestination.ECONOMIC_CALENDAR -> NewsAndCalendarScreen(
@@ -406,14 +422,17 @@ fun JaxTerminalApp(
                                     uiState = uiState,
                                     onFetchLiveNews = { viewModel.fetchLiveNews() },
                                     onFetchCalendar = { viewModel.fetchEconomicCalendar() },
-                                    onGenerateDailyBriefing = { viewModel.generateDailyBriefing() }
+                                    onGenerateDailyBriefing = { viewModel.generateDailyBriefing() },
+                                    onInvestigateNews = { viewModel.investigateNewsArticle(it) },
+                                    onAnalyzeCentralBanks = { viewModel.analyzeCentralBanksWithAi() }
                                 )
 
                                 WorkspaceDestination.MARKET_WATCH_TOWER -> WatchTowerScreen(
                                     uiState = uiState,
                                     alerts = alerts,
                                     onToggleGhostMonitor = { viewModel.toggleGhostMonitor() },
-                                    onRunScan = { viewModel.runOmniscanner() }
+                                    onRunScan = { viewModel.runOmniscanner() },
+                                    onRunAnomalySweep = { viewModel.runWatchtowerAnomalySweep() }
                                 )
 
                                 WorkspaceDestination.HISTORICAL_INTELLIGENCE -> QuantLabAndHistoricalScreen(
@@ -421,7 +440,10 @@ fun JaxTerminalApp(
                                     uiState = uiState,
                                     backtests = backtests,
                                     setups = setups,
-                                    onRunBacktest = { name, sp, sl -> viewModel.runQuantBacktest(name, sp, sl) }
+                                    onRunBacktest = { name, sp, sl -> viewModel.runQuantBacktest(name, sp, sl) },
+                                    onRunMutationLab = { viewModel.runStrategyMutationLab() },
+                                    onRunBlindSim = { pct, useAi -> viewModel.runHistoricalRealitySimulation(pct, useAi) },
+                                    onRevealSimOutcome = { viewModel.revealHistoricalRealityOutcome() }
                                 )
 
                                 WorkspaceDestination.BACKTESTING_LAB -> QuantLabAndHistoricalScreen(
@@ -429,7 +451,10 @@ fun JaxTerminalApp(
                                     uiState = uiState,
                                     backtests = backtests,
                                     setups = setups,
-                                    onRunBacktest = { name, sp, sl -> viewModel.runQuantBacktest(name, sp, sl) }
+                                    onRunBacktest = { name, sp, sl -> viewModel.runQuantBacktest(name, sp, sl) },
+                                    onRunMutationLab = { viewModel.runStrategyMutationLab() },
+                                    onRunBlindSim = { pct, useAi -> viewModel.runHistoricalRealitySimulation(pct, useAi) },
+                                    onRevealSimOutcome = { viewModel.revealHistoricalRealityOutcome() }
                                 )
 
                                 WorkspaceDestination.RISK_COMMAND_CENTRE -> RiskAndExecutionScreen(
@@ -471,7 +496,8 @@ fun JaxTerminalApp(
                                     connections = connections,
                                     onAckAlert = { viewModel.acknowledgeAlert(it) },
                                     onExecuteVoiceCommand = { viewModel.executeVoiceCommand(it) },
-                                    onSignOut = onSignOutAction
+                                    onSignOut = onSignOutAction,
+                                    onDispatchSwarm = { viewModel.runAutonomousSwarm() }
                                 )
 
                                 WorkspaceDestination.STRATEGY_ARCHITECT -> StrategyArchitectScreen(
@@ -685,9 +711,11 @@ private fun TerminalTopHeader(
 private fun WorkspaceDrawerContent(
     selectedWorkspace: WorkspaceDestination,
     operatorName: String,
+    operatorEmail: String,
     executionMode: String,
     emergencyStop: Boolean,
-    onSelectWorkspace: (WorkspaceDestination) -> Unit
+    onSelectWorkspace: (WorkspaceDestination) -> Unit,
+    onSignOut: () -> Unit
 ) {
     val grouped = remember { WorkspaceGroup.entries.associateWith { grp -> WorkspaceDestination.entries.filter { it.group == grp } } }
 
@@ -720,12 +748,21 @@ private fun WorkspaceDrawerContent(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
+            if (operatorEmail.isNotBlank()) {
+                Text(
+                    text = operatorEmail,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = EmeraldBullish,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
 
         HorizontalDivider(color = GlassBorder, modifier = Modifier.padding(vertical = 6.dp))
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
@@ -783,6 +820,35 @@ private fun WorkspaceDrawerContent(
                         }
                     }
                 }
+            }
+        }
+
+        HorizontalDivider(color = GlassBorder, modifier = Modifier.padding(vertical = 6.dp))
+
+        Surface(
+            color = ObsidianBlack.copy(alpha = 0.7f),
+            border = BorderStroke(1.dp, GlassBorderGold),
+            shape = RoundedCornerShape(10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp)
+                .clickable(onClick = onSignOut)
+                .testTag("drawer_sign_out_button")
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Switch Google Account / Sign Out",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MetallicGold,
+                    fontWeight = FontWeight.SemiBold
+                )
+                StatusPill(text = "AUTH", color = EmeraldBullish)
             }
         }
     }

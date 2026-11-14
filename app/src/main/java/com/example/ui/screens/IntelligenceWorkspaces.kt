@@ -31,6 +31,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -314,16 +315,23 @@ fun MultiAiCouncilAndBureauScreen(
     instruments: List<WatchlistInstrument>,
     investigations: List<AiInvestigationReport>,
     onSelectInstrument: (String) -> Unit,
-    onRunCouncil: () -> Unit
+    onRunCouncil: () -> Unit,
+    onRunTribunal: () -> Unit = {}
 ) {
+    var activeTab by remember { mutableIntStateOf(if (isBureauMode) 1 else 0) } // 0 = Council Debate, 1 = Supreme Tribunal
+
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         GlassPanel(goldAccent = true) {
             SectionHeader(
-                title = if (isBureauMode) "AI INVESTIGATION BUREAU" else "MULTI-AI COUNCIL & DEBATE CHAMBER",
-                subtitle = if (isBureauMode) "Signal forensics, evidence verification & contradiction detection"
+                title = if (isBureauMode) "AI INVESTIGATION BUREAU" else "MULTI-AI COUNCIL & SUPREME TRIBUNAL",
+                subtitle = if (activeTab == 1) "Adversarial prosecution vs defense challenging conclusions"
                 else "12 Specialist AI Agents + Chief Analyst preserving real disagreements",
                 badge = "FIREBASE AI LOGIC"
             )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(selected = activeTab == 0, onClick = { activeTab = 0 }, label = { Text("12-Agent Debate") })
+                FilterChip(selected = activeTab == 1, onClick = { activeTab = 1 }, label = { Text("Supreme AI Tribunal") })
+            }
             Row(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -336,20 +344,32 @@ fun MultiAiCouncilAndBureauScreen(
                     )
                 }
             }
-            Button(
-                onClick = onRunCouncil,
-                enabled = !uiState.isAiRunning,
-                modifier = Modifier.testTag("run_ai_council_button"),
-                colors = ButtonDefaults.buttonColors(containerColor = MetallicGold, contentColor = ObsidianBlack)
-            ) {
-                if (uiState.isAiRunning) {
-                    CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = ObsidianBlack)
-                } else {
-                    Icon(Icons.Default.Psychology, contentDescription = null, modifier = Modifier.size(16.dp))
+            if (activeTab == 0) {
+                Button(
+                    onClick = onRunCouncil,
+                    enabled = !uiState.isAiRunning,
+                    modifier = Modifier.testTag("run_ai_council_button"),
+                    colors = ButtonDefaults.buttonColors(containerColor = MetallicGold, contentColor = ObsidianBlack)
+                ) {
+                    if (uiState.isAiRunning) {
+                        CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = ObsidianBlack)
+                    } else {
+                        Icon(Icons.Default.Psychology, contentDescription = null, modifier = Modifier.size(16.dp))
+                    }
+                    Spacer(Modifier.size(6.dp))
+                    Text("Convene Multi-AI Debate (${uiState.selectedInstrument})")
                 }
-                Spacer(Modifier.size(6.dp))
-                Text("Convene Multi-AI Debate (${uiState.selectedInstrument})")
             }
+        }
+
+        if (activeTab == 1) {
+            SupremeTribunalPanel(
+                instrument = uiState.selectedInstrument,
+                isRunning = uiState.isTribunalRunning,
+                records = uiState.tribunalRecords,
+                onRunTribunal = onRunTribunal
+            )
+            return
         }
 
         GlassPanel {
@@ -404,16 +424,25 @@ fun MultiAiCouncilAndBureauScreen(
 @Composable
 fun LiquidityAndDnaScreen(
     isLiquidityView: Boolean,
-    uiState: JaxUiState
+    uiState: JaxUiState,
+    onScanFingerprints: () -> Unit = {}
 ) {
     val sym = uiState.selectedInstrument
     val tech = uiState.technicalBySymbol[sym]
     val analogues = uiState.analoguesBySymbol[sym].orEmpty()
+    val fingerprints = uiState.patternFingerprintsBySymbol[sym].orEmpty()
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        GlassPanel(goldAccent = true) {
+        if (!isLiquidityView) {
+            PatternFingerprintScannerPanel(
+                instrument = sym,
+                matches = fingerprints,
+                onScanFingerprints = onScanFingerprints
+            )
+        }
+        GlassPanel(goldAccent = isLiquidityView) {
             SectionHeader(
-                title = if (isLiquidityView) "LIQUIDITY WARFARE & DESTINATIONS" else "MARKET DNA LABORATORY",
+                title = if (isLiquidityView) "LIQUIDITY WARFARE & DESTINATIONS" else "HISTORICAL COSINE ANALOGUES",
                 subtitle = if (isLiquidityView) "Equal highs/lows, stop runs, FVG & Order Block mapping"
                 else "Cosine similarity matching against historical candle windows",
                 badge = sym

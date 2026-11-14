@@ -7,6 +7,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -60,10 +63,15 @@ private fun FirebaseAuth.authStateFlow(): Flow<FirebaseUser?> = callbackFlow {
 private fun JaxAppRoot() {
     val auth = Firebase.auth
     val currentUser by auth.authStateFlow().collectAsStateWithLifecycle(initialValue = auth.currentUser)
+    var lastAuthIsNewUser by remember { mutableStateOf(false) }
 
     val signedInUser = currentUser
     if (signedInUser == null) {
-        AuthGateScreen(onAuthSuccess = {})
+        AuthGateScreen(
+            onAuthSuccess = { outcome ->
+                lastAuthIsNewUser = outcome.isNewUser
+            }
+        )
     } else {
         key(signedInUser.uid) {
             val viewModel: JaxViewModel = viewModel(
@@ -91,14 +99,18 @@ private fun JaxAppRoot() {
                             aiOrchestrator = aiOrchestrator,
                             secretVault = vault,
                             currentUserId = signedInUser.uid,
-                            operatorDisplayName = displayName
+                            operatorDisplayName = displayName,
+                            operatorEmail = signedInUser.email.orEmpty(),
+                            isNewUserSession = lastAuthIsNewUser
                         )
                     }
                 }
             )
             JaxTerminalApp(
                 viewModel = viewModel,
-                onSignedOut = {}
+                onSignedOut = {
+                    lastAuthIsNewUser = false
+                }
             )
         }
     }

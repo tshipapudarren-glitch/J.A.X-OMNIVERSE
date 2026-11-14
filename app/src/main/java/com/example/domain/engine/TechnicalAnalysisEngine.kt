@@ -326,7 +326,7 @@ object TechnicalAnalysisEngine {
         return if (slice.isNotEmpty()) slice.average() else 0.0
     }
 
-    private fun computeRsi(closes: List<Double>, period: Int): Double {
+    fun computeRsi(closes: List<Double>, period: Int): Double {
         if (closes.size <= period) return 50.0
         var gains = 0.0
         var losses = 0.0

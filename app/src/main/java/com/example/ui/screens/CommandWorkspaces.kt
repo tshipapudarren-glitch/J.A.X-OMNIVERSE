@@ -41,6 +41,7 @@ import com.example.domain.engine.TechnicalAnalysisEngine
 import com.example.domain.model.AlertRecord
 import com.example.domain.model.ApiConnectionConfig
 import com.example.domain.model.ConnectionHealth
+import com.example.domain.model.ScannerCriteriaConfig
 import com.example.domain.model.TradingSetup
 import com.example.domain.model.UserWorkspaceProfile
 import com.example.domain.model.WatchlistInstrument
@@ -71,6 +72,7 @@ fun GlobalCommandCentreScreen(
     alerts: List<AlertRecord>,
     onRunScan: () -> Unit,
     onFetchNews: () -> Unit,
+    onGenerateExecutiveBriefing: () -> Unit = {},
     onToggleEmergencyStop: () -> Unit,
     onSelectInstrument: (String) -> Unit,
     onNavigate: (WorkspaceDestination) -> Unit
@@ -144,6 +146,14 @@ fun GlobalCommandCentreScreen(
                 }
 
                 OutlinedButton(
+                    onClick = onGenerateExecutiveBriefing,
+                    enabled = !uiState.isAiRunning,
+                    modifier = Modifier.testTag("executive_briefing_button")
+                ) {
+                    Text("Executive Briefing AI")
+                }
+
+                OutlinedButton(
                     onClick = onToggleEmergencyStop,
                     modifier = Modifier.testTag("emergency_stop_button")
                 ) {
@@ -154,6 +164,36 @@ fun GlobalCommandCentreScreen(
                         color = DeepRedBearish
                     )
                 }
+            }
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                listOf(
+                    "Perfect Storm & Divergence" to WorkspaceDestination.OPPORTUNITY_RADAR,
+                    "Strategy DNA Mutation" to WorkspaceDestination.BACKTESTING_LAB,
+                    "Pattern Fingerprints" to WorkspaceDestination.MARKET_DNA_LAB,
+                    "Supreme AI Tribunal" to WorkspaceDestination.MULTI_AI_COUNCIL,
+                    "Autonomous Swarm" to WorkspaceDestination.AUTONOMOUS_AGENT_CENTRE,
+                    "Central Banks" to WorkspaceDestination.ECONOMIC_CALENDAR,
+                    "Reality Simulator" to WorkspaceDestination.HISTORICAL_INTELLIGENCE,
+                    "Omniscient Watchtower" to WorkspaceDestination.MARKET_WATCH_TOWER
+                ).forEach { (label, dest) ->
+                    FilterChip(
+                        selected = false,
+                        onClick = { onNavigate(dest) },
+                        label = { Text(label) }
+                    )
+                }
+            }
+        }
+
+        val briefingText = uiState.executiveBriefing ?: uiState.dailyBriefing
+        if (!briefingText.isNullOrBlank()) {
+            GlassPanel(goldAccent = true) {
+                SectionHeader("EXECUTIVE INTELLIGENCE BRIEFING", "Priorities, unfinished missions, news, alerts & actions")
+                Text(briefingText, style = MaterialTheme.typography.bodySmall, color = CrispWhite)
             }
         }
 
@@ -417,20 +457,40 @@ fun OpportunityRadarAndScannerScreen(
     onSelectTimeframe: (String) -> Unit,
     onRunScan: () -> Unit,
     onSelectInstrument: (String) -> Unit,
-    onGenerateSetup: () -> Unit
+    onGenerateSetup: () -> Unit,
+    onUpdateScannerCriteria: (ScannerCriteriaConfig) -> Unit = {}
 ) {
-    val snapshots = uiState.technicalBySymbol.values.sortedByDescending { it.opportunityScore }
+    var radarTab by remember { mutableStateOf(0) } // 0 = Radar/Arena, 1 = Perfect Storm & Sentiment Divergence
+    val criteria = uiState.scannerCriteria
+    val snapshots = uiState.technicalBySymbol.values
+        .filter { snap ->
+            if (isRadarView) true
+            else {
+                val q = uiState.quotes[snap.instrument]
+                snap.opportunityScore >= criteria.minConfluenceScore &&
+                    snap.volatilityRatio >= criteria.minVolatilityRatio &&
+                    (criteria.trendBiasFilter == "ALL" || snap.structureBias == criteria.trendBiasFilter) &&
+                    ((q?.spreadPct ?: 0.0) <= criteria.maxAllowedSpreadPct)
+            }
+        }
+        .sortedByDescending { it.opportunityScore }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         GlassPanel(goldAccent = true) {
             SectionHeader(
-                title = if (isRadarView) "OPPORTUNITY RADAR & ARENA" else "APEX OMNISCANNER X",
-                subtitle = if (isRadarView) "Real-time competition ranking across developing conditions"
-                else "Multi-timeframe structure, liquidity sweep, volatility & regime scanner",
+                title = if (isRadarView) "OPPORTUNITY RADAR & PERFECT STORM" else "GLOBAL OPPORTUNITY SCANNER",
+                subtitle = if (isRadarView) "Rare multi-evidence convergence & global sentiment conflict detection"
+                else "Configurable confluence, volatility, trend & risk filter across live feeds",
                 badge = uiState.selectedTimeframe
             )
             if (isRadarView) {
-                AnimatedMarketRadar(snapshots = snapshots)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FilterChip(selected = radarTab == 0, onClick = { radarTab = 0 }, label = { Text("Opportunity Arena") })
+                    FilterChip(selected = radarTab == 1, onClick = { radarTab = 1 }, label = { Text("Perfect Storm & Divergence") })
+                }
+                if (radarTab == 0) {
+                    AnimatedMarketRadar(snapshots = snapshots)
+                }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 listOf("15M", "1H", "4H", "1D").forEach { tf ->
@@ -452,10 +512,26 @@ fun OpportunityRadarAndScannerScreen(
             }
         }
 
+        if (isRadarView && radarTab == 1) {
+            SentimentDivergenceAndStormPanel(
+                divergences = uiState.sentimentDivergences,
+                storms = uiState.perfectStormSignals,
+                onScanAll = onRunScan
+            )
+            return
+        }
+
+        if (!isRadarView) {
+            ConfigurableScannerCriteriaBar(
+                criteria = criteria,
+                onUpdateCriteria = onUpdateScannerCriteria
+            )
+        }
+
         if (snapshots.isEmpty()) {
             GlassPanel {
                 Text(
-                    "No scanner snapshots computed yet. Run Omniscanner X to inspect live candles and score setups.",
+                    "No scanner snapshots match active filters or no scan has run yet.",
                     color = CoolGrey
                 )
             }
@@ -505,13 +581,14 @@ fun WatchTowerScreen(
     uiState: JaxUiState,
     alerts: List<AlertRecord>,
     onToggleGhostMonitor: () -> Unit,
-    onRunScan: () -> Unit
+    onRunScan: () -> Unit,
+    onRunAnomalySweep: () -> Unit = {}
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         GlassPanel(goldAccent = true) {
             SectionHeader(
-                title = "MARKET WATCH TOWER (24/7)",
-                subtitle = "APEX Ghost Monitor, anomaly detection & setup lifecycle tracking",
+                title = "OMNISCIENT WATCHTOWER (24/7)",
+                subtitle = "Monitors connected APIs, AI providers, feeds, workflows & prioritized anomalies",
                 badge = if (uiState.ghostMonitorActive) "GHOST ACTIVE" else "MANUAL",
                 badgeColor = if (uiState.ghostMonitorActive) EmeraldBullish else CoolGrey
             )
@@ -534,6 +611,11 @@ fun WatchTowerScreen(
                 Text("Trigger Immediate Watch Sweep")
             }
         }
+
+        OmniscientWatchtowerPanel(
+            anomalies = uiState.watchtowerAnomalies,
+            onRunSweep = onRunAnomalySweep
+        )
 
         GlassPanel {
             SectionHeader("VOLATILITY & SHOCK MONITOR", "Instruments with ATR expansion > 1.25x baseline")

@@ -90,6 +90,19 @@ fun RiskAndExecutionScreen(
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         GlassPanel(goldAccent = true) {
             SectionHeader(
+                title = "SOVEREIGN RISK GUARDIAN",
+                subtitle = "Deterministic account protection strictly isolated from AI Council, Swarm & Voice",
+                badge = if (profile?.emergencyStop == true) "LOCKED — EMERGENCY STOP" else "GUARDIAN ARMED",
+                badgeColor = if (profile?.emergencyStop == true) DeepRedBearish else EmeraldBullish
+            )
+            Text(
+                "Max Risk/Trade ${riskPctText}% | Max Daily DD ${maxDailyLossText}% | Max Open ${maxPosText} | Execution Permission: $selectedMode",
+                style = MaterialTheme.typography.labelMedium,
+                color = CyanInfo
+            )
+        }
+        GlassPanel(goldAccent = true) {
+            SectionHeader(
                 title = if (isExecutionView) "EXECUTION INTELLIGENCE & PERMISSIONS" else "RISK COMMAND CENTRE",
                 subtitle = "Deterministic Risk Guardian (cannot be bypassed by AI or Voice)",
                 badge = if (profile?.emergencyStop == true) "EMERGENCY STOP" else selectedMode,
@@ -437,7 +450,8 @@ fun AutonomousOpsVoiceAndAdminScreen(
     connections: List<ApiConnectionConfig>,
     onAckAlert: (String) -> Unit,
     onExecuteVoiceCommand: (String) -> Unit,
-    onSignOut: () -> Unit
+    onSignOut: () -> Unit,
+    onDispatchSwarm: () -> Unit = {}
 ) {
     val context = LocalContext.current
     var commandText by remember { mutableStateOf("") }
@@ -474,8 +488,13 @@ fun AutonomousOpsVoiceAndAdminScreen(
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         when (mode) {
             "AGENTS" -> {
-                GlassPanel(goldAccent = true) {
-                    SectionHeader("AUTONOMOUS AGENT CENTRE", "Scanner Network, Mission Controller & Health Monitor")
+                AutonomousSwarmPanel(
+                    isRunning = uiState.isSwarmRunning,
+                    reports = uiState.swarmReports,
+                    onDispatchSwarm = onDispatchSwarm
+                )
+                GlassPanel {
+                    SectionHeader("12-AGENT SPECIALIST HEALTH ROSTER", "Scanner Network, Mission Controller & Health Monitor")
                     uiState.agentRoster.forEach { ag ->
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                             Column(Modifier.weight(1f)) {
@@ -592,16 +611,37 @@ fun AutonomousOpsVoiceAndAdminScreen(
             }
             "ADMIN" -> {
                 GlassPanel(goldAccent = true) {
-                    SectionHeader("SYSTEM ADMINISTRATION & AUDIT", "RBAC role, zero-trust Firestore rules & immutable audit logs")
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Column {
+                    SectionHeader("SYSTEM ADMINISTRATION & GOOGLE IDENTITY", "RBAC role, Credential Manager session & zero-trust Firestore isolation")
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
                             Text("Operator: ${profile?.displayName ?: "Authenticated"}", style = MaterialTheme.typography.titleMedium, color = CrispWhite)
+                            if (uiState.operatorEmail.isNotBlank()) {
+                                Text("Google Account: ${uiState.operatorEmail}", style = MaterialTheme.typography.bodySmall, color = EmeraldBullish)
+                            }
+                            if (uiState.operatorUid.isNotBlank()) {
+                                Text("Workspace UID: ${uiState.operatorUid}", style = MaterialTheme.typography.labelSmall, color = CoolGrey)
+                            }
                             Text("Role: ${profile?.role ?: "analyst"} | Execution: ${profile?.executionMode ?: "ANALYSIS_ONLY"}", style = MaterialTheme.typography.bodySmall, color = CoolGrey)
                         }
-                        Icon(Icons.Default.Security, contentDescription = null, tint = EmeraldBullish)
+                        Icon(Icons.Default.Security, contentDescription = "Google Zero Trust Active", tint = EmeraldBullish)
                     }
-                    OutlinedButton(onClick = onSignOut) {
-                        Text("Sign Out (Clear Credential Manager)", color = DeepRedBearish)
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Button(
+                            onClick = onSignOut,
+                            colors = ButtonDefaults.buttonColors(containerColor = MetallicGold, contentColor = ObsidianBlack),
+                            modifier = Modifier.testTag("admin_switch_account_button")
+                        ) {
+                            Text("Switch Google Account")
+                        }
+                        OutlinedButton(
+                            onClick = onSignOut,
+                            modifier = Modifier.testTag("admin_sign_out_button")
+                        ) {
+                            Text("Sign Out", color = DeepRedBearish)
+                        }
                     }
                 }
                 GlassPanel {
