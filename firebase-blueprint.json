@@ -1,0 +1,237 @@
+{
+  "entities": {
+    "UserWorkspaceProfile": {
+      "title": "UserWorkspaceProfile",
+      "description": "Authenticated operator workspace preferences, risk limits, and execution mode.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Firebase Auth UID" },
+        "displayName": { "type": "string", "description": "Operator display name" },
+        "role": { "type": "string", "enum": ["analyst", "risk_officer", "admin"], "description": "RBAC role" },
+        "executionMode": { "type": "string", "enum": ["ANALYSIS_ONLY", "MANUAL_APPROVAL", "AUTHORISED_AUTOMATION"], "description": "Current execution permission mode" },
+        "emergencyStop": { "type": "boolean", "description": "Global emergency execution stop flag" },
+        "accountBalance": { "type": "number", "description": "Configured reference account balance" },
+        "riskPerTradePct": { "type": "number", "description": "Max risk percent per trade" },
+        "maxDailyLossPct": { "type": "number", "description": "Max daily drawdown percent" },
+        "maxConcurrentPositions": { "type": "integer", "description": "Max open positions allowed" },
+        "preferredInstruments": { "type": "string", "description": "Comma-separated preferred instruments" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp" }
+      },
+      "required": ["userId", "displayName", "role", "executionMode", "emergencyStop", "accountBalance", "riskPerTradePct", "maxDailyLossPct", "maxConcurrentPositions", "createdAt", "updatedAt"]
+    },
+    "WatchlistInstrument": {
+      "title": "WatchlistInstrument",
+      "description": "Configured financial instrument tracked by Omniscanner and Watch Tower.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "symbol": { "type": "string" },
+        "displayName": { "type": "string" },
+        "assetClass": { "type": "string", "enum": ["CRYPTO", "FOREX", "COMMODITY", "INDEX", "EQUITY"] },
+        "providerId": { "type": "string" },
+        "providerSymbol": { "type": "string" },
+        "pipSize": { "type": "number" },
+        "contractSize": { "type": "number" },
+        "enabled": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "symbol", "displayName", "assetClass", "providerId", "providerSymbol", "pipSize", "contractSize", "enabled", "createdAt", "updatedAt"]
+    },
+    "ApiConnectionConfig": {
+      "title": "ApiConnectionConfig",
+      "description": "Non-secret provider connection metadata; secrets remain encrypted locally via Android Keystore.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "providerName": { "type": "string" },
+        "category": { "type": "string", "enum": ["MARKET_DATA", "NEWS", "CALENDAR", "AI_MODEL", "MT5_BRIDGE", "NOTIFICATIONS", "VOICE"] },
+        "baseUrl": { "type": "string" },
+        "status": { "type": "string", "enum": ["CONNECTED", "DISCONNECTED", "ERROR", "RATE_LIMITED"] },
+        "credentialConfigured": { "type": "boolean" },
+        "rateLimitInfo": { "type": "string" },
+        "lastLatencyMs": { "type": "integer" },
+        "lastError": { "type": "string" },
+        "enabled": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "providerName", "category", "baseUrl", "status", "credentialConfigured", "enabled", "createdAt", "updatedAt"]
+    },
+    "TradingSetup": {
+      "title": "TradingSetup",
+      "description": "Generated and lifecycle-tracked conditional trading setup.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "instrument": { "type": "string" },
+        "direction": { "type": "string", "enum": ["BULLISH", "BEARISH", "NEUTRAL"] },
+        "setupType": { "type": "string" },
+        "status": { "type": "string", "enum": ["DEVELOPING", "CONFIRMED", "INVALIDATED", "EXPIRED"] },
+        "timeframe": { "type": "string" },
+        "higherTimeframeBias": { "type": "string" },
+        "entryZoneLow": { "type": "number" },
+        "entryZoneHigh": { "type": "number" },
+        "stopLoss": { "type": "number" },
+        "tp1": { "type": "number" },
+        "tp2": { "type": "number" },
+        "tp3": { "type": "number" },
+        "rr1": { "type": "number" },
+        "score": { "type": "integer" },
+        "evidenceSummary": { "type": "string" },
+        "confirmationConditions": { "type": "string" },
+        "invalidationConditions": { "type": "string" },
+        "dataQualityStatus": { "type": "string" },
+        "newsExposure": { "type": "string" },
+        "aiSummary": { "type": "string" },
+        "version": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "instrument", "direction", "setupType", "status", "timeframe", "entryZoneLow", "entryZoneHigh", "stopLoss", "tp1", "tp2", "tp3", "rr1", "score", "evidenceSummary", "confirmationConditions", "invalidationConditions", "dataQualityStatus", "version", "createdAt", "updatedAt"]
+    },
+    "AiInvestigationReport": {
+      "title": "AiInvestigationReport",
+      "description": "Multi-AI Debate Chamber and Chief Analyst investigation output preserving disagreements.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "instrument": { "type": "string" },
+        "timeframe": { "type": "string" },
+        "regime": { "type": "string" },
+        "bullishArgument": { "type": "string" },
+        "bearishArgument": { "type": "string" },
+        "liquidityInterpretation": { "type": "string" },
+        "volumeInterpretation": { "type": "string" },
+        "macroInterpretation": { "type": "string" },
+        "riskAssessment": { "type": "string" },
+        "verificationReport": { "type": "string" },
+        "chiefAnalystVerdict": { "type": "string" },
+        "disagreements": { "type": "string" },
+        "confidenceScore": { "type": "integer" },
+        "verified": { "type": "boolean" },
+        "modelRouterInfo": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "instrument", "timeframe", "regime", "bullishArgument", "bearishArgument", "riskAssessment", "verificationReport", "chiefAnalystVerdict", "disagreements", "confidenceScore", "verified", "createdAt", "updatedAt"]
+    },
+    "AlertRecord": {
+      "title": "AlertRecord",
+      "description": "System, scanner, risk, news, and integration alert.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "category": { "type": "string" },
+        "priority": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+        "instrument": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "acknowledged": { "type": "boolean" },
+        "sourceEngine": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "category", "priority", "instrument", "title", "message", "acknowledged", "sourceEngine", "createdAt", "updatedAt"]
+    },
+    "ExecutionOrderRecord": {
+      "title": "ExecutionOrderRecord",
+      "description": "Order intent gated by deterministic Risk Engine and Execution Permission Mode.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "instrument": { "type": "string" },
+        "direction": { "type": "string", "enum": ["BUY", "SELL"] },
+        "volumeLots": { "type": "number" },
+        "entryPrice": { "type": "number" },
+        "stopLoss": { "type": "number" },
+        "takeProfit": { "type": "number" },
+        "riskPercent": { "type": "number" },
+        "executionMode": { "type": "string", "enum": ["ANALYSIS_ONLY", "MANUAL_APPROVAL", "AUTHORISED_AUTOMATION"] },
+        "status": { "type": "string", "enum": ["BLOCKED", "PENDING_APPROVAL", "APPROVED", "TRANSMITTED", "REJECTED", "CANCELLED"] },
+        "riskCheckPassed": { "type": "boolean" },
+        "rejectionReason": { "type": "string" },
+        "requestNonce": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "instrument", "direction", "volumeLots", "entryPrice", "stopLoss", "takeProfit", "riskPercent", "executionMode", "status", "riskCheckPassed", "requestNonce", "createdAt", "updatedAt"]
+    },
+    "BacktestRunRecord": {
+      "title": "BacktestRunRecord",
+      "description": "Deterministic historical strategy backtest and walk-forward summary.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "strategyName": { "type": "string" },
+        "instrument": { "type": "string" },
+        "timeframe": { "type": "string" },
+        "totalTrades": { "type": "integer" },
+        "winRatePct": { "type": "number" },
+        "profitFactor": { "type": "number" },
+        "expectancyR": { "type": "number" },
+        "maxDrawdownPct": { "type": "number" },
+        "netReturnPct": { "type": "number" },
+        "spreadAssumed": { "type": "number" },
+        "slippageAssumed": { "type": "number" },
+        "walkForwardPassed": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "strategyName", "instrument", "timeframe", "totalTrades", "winRatePct", "profitFactor", "expectancyR", "maxDrawdownPct", "netReturnPct", "spreadAssumed", "slippageAssumed", "walkForwardPassed", "createdAt", "updatedAt"]
+    },
+    "AuditLogRecord": {
+      "title": "AuditLogRecord",
+      "description": "Immutable append-only audit log of consequential system actions.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "action": { "type": "string" },
+        "category": { "type": "string" },
+        "details": { "type": "string" },
+        "severity": { "type": "string", "enum": ["INFO", "WARNING", "CRITICAL"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "action", "category", "details", "severity", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserWorkspaceProfile" },
+      "description": "Operator profile, risk settings, and execution mode."
+    },
+    "/users/{userId}/instruments/{instrumentId}": {
+      "schema": { "$ref": "#/entities/WatchlistInstrument" },
+      "description": "User watchlist instruments."
+    },
+    "/users/{userId}/connections/{connectionId}": {
+      "schema": { "$ref": "#/entities/ApiConnectionConfig" },
+      "description": "Non-secret API and data provider connections."
+    },
+    "/users/{userId}/setups/{setupId}": {
+      "schema": { "$ref": "#/entities/TradingSetup" },
+      "description": "Generated market setups and lifecycle versions."
+    },
+    "/users/{userId}/investigations/{investigationId}": {
+      "schema": { "$ref": "#/entities/AiInvestigationReport" },
+      "description": "Multi-AI Council and Debate Chamber investigation reports."
+    },
+    "/users/{userId}/alerts/{alertId}": {
+      "schema": { "$ref": "#/entities/AlertRecord" },
+      "description": "In-app alert and notification records."
+    },
+    "/users/{userId}/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/ExecutionOrderRecord" },
+      "description": "Execution permission queue and order history."
+    },
+    "/users/{userId}/backtests/{backtestId}": {
+      "schema": { "$ref": "#/entities/BacktestRunRecord" },
+      "description": "Quant Lab backtest run records."
+    },
+    "/users/{userId}/audit_logs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLogRecord" },
+      "description": "Immutable append-only security and execution audit logs."
+    }
+  }
+}

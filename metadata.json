@@ -1,0 +1,6 @@
+{
+  "name": "JAX Omniverse",
+  "description": "J.A.X. Omniverse — Apex Command Intelligence X multi-AI trading and market intelligence platform",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

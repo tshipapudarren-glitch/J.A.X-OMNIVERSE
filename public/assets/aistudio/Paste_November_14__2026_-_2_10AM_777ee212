@@ -1,0 +1,1220 @@
+# J.A.X. OMNIVERSE
+## APEX COMMAND INTELLIGENCE X
+### THE ULTIMATE MULTI-AI TRADING & MARKET INTELLIGENCE PLATFORM
+
+**MASTER DEVELOPMENT PROMPT — COMPLETE SYSTEM**
+
+---
+
+# 1. YOUR MISSION
+
+Act as a world-class team of:
+
+- Senior full-stack software engineers
+- AI and multi-agent system architects
+- Quantitative researchers
+- Financial market analysts
+- MT5 integration engineers
+- Data engineers
+- UI/UX designers
+- Cybersecurity engineers
+- Trading risk-management specialists
+
+Your mission is to DESIGN, BUILD, AND IMPLEMENT a complete professional-grade AI-powered trading intelligence platform called:
+
+**J.A.X. OMNIVERSE — APEX COMMAND INTELLIGENCE X**
+
+This must be a functional, production-oriented market intelligence ecosystem, not a static dashboard, mockup, or collection of disconnected screens.
+
+Build actual application functionality, database structures, backend services, API integrations, agent orchestration, live monitoring, chart analysis, scanner engines, alert systems, and MT5 connectivity.
+
+Do not merely describe what could be built. Implement the application in working development stages.
+
+When an external service is not connected, clearly identify it as disconnected. Never fabricate market prices, news, AI analysis, trading signals, backtest results, or API responses.
+
+# 2. CORE VISION
+
+J.A.X. is a multi-AI financial intelligence ecosystem that continuously investigates financial markets, discovers opportunities, studies historical market behaviour, analyses news, evaluates trading setups, monitors risk, and assists with trading decisions.
+
+The system must be capable of:
+
+1. Monitoring multiple markets simultaneously.
+2. Discovering developing trading opportunities.
+3. Detecting market structure and liquidity behaviour.
+4. Analysing live and uploaded charts.
+5. Generating structured trading scenarios.
+6. Investigating why a setup appeared.
+7. Comparing current conditions with historical market behaviour.
+8. Analysing economic and geopolitical news.
+9. Monitoring existing setups and their invalidation conditions.
+10. Conducting historical research and strategy testing.
+11. Coordinating multiple specialist AI agents.
+12. Communicating with MetaTrader 5.
+13. Delivering intelligent alerts and voice-controlled commands.
+14. Learning from verified historical outcomes without blindly changing trading rules.
+
+The platform must distinguish between:
+- Observed market facts
+- Calculated technical measurements
+- AI interpretations
+- Historical statistical evidence
+- Conditional forecasts
+- Unverified information
+- Confirmed trading decisions
+
+# 3. VISUAL IDENTITY
+
+Create an exclusive institutional trading-terminal interface.
+
+**Colour palette:**
+- Obsidian black: primary background.
+- Black glass: panels and containers.
+- Metallic gold: primary highlights and active intelligence.
+- Deep red: bearish conditions, risk and warnings.
+- Emerald green: bullish conditions and confirmed positive states.
+- Cool grey: secondary information.
+- White: important text.
+
+**Design characteristics:**
+- Premium glassmorphism.
+- High-density financial terminal layout.
+- Professional candlestick charts.
+- Animated market radar.
+- Real-time market activity panels.
+- Detailed data visualisations.
+- Interactive dashboards.
+- Smooth transitions.
+- Responsive desktop, tablet and mobile layouts.
+- Collapsible side navigation.
+- Customisable workspaces.
+- Dark mode as the default.
+
+Avoid generic templates, oversized empty cards, excessive gradients and unnecessary decoration.
+
+# 4. MAIN APPLICATION NAVIGATION
+
+Build the following primary workspaces:
+
+1. Global Command Centre
+2. Market Overview
+3. Opportunity Radar
+4. Omniscanner
+5. Setup Generator
+6. Chart Intelligence
+7. AI Investigation Bureau
+8. Liquidity Intelligence
+9. Market DNA Laboratory
+10. News Intelligence Centre
+11. Economic Calendar
+12. Market Watch Tower
+13. Historical Intelligence
+14. Backtesting Laboratory
+15. Risk Command Centre
+16. Execution Intelligence
+17. Multi-AI Council
+18. Autonomous Agent Centre
+19. Strategy Architect
+20. Performance Observatory
+21. API & Data Connections
+22. MT5 Control Centre
+23. Alert & Notification Centre
+24. Voice Command Centre
+25. System Administration
+
+Each workspace must have a real purpose, functional navigation and appropriate data connections.
+
+# 5. GLOBAL MARKET COMMAND CENTRE
+
+Create a central command dashboard displaying:
+
+- Live market status.
+- Global market overview.
+- Market session status.
+- Instrument watchlist.
+- Bullish and bearish market conditions.
+- Volatility levels.
+- Market regime.
+- Developing opportunities.
+- Confirmed setups.
+- Active news events.
+- Upcoming economic releases.
+- Risk warnings.
+- AI agent activity.
+- Data-provider health.
+- MT5 connection status.
+- Recent investigations.
+- Active alerts.
+
+Include a global opportunity leaderboard showing the strongest developing opportunities across monitored instruments.
+
+Allow users to customise their dashboard and select their preferred instruments.
+
+# 6. THE 25 CORE INTELLIGENCE ENGINES
+
+Build the following specialist engines as connected services.
+
+### ENGINE 01 — APEX OMNISCANNER X
+Scan configured instruments and timeframes continuously.
+
+Identify:
+- Trends
+- Ranges
+- Breakouts
+- Reversals
+- Liquidity sweeps
+- Volatility transitions
+- Compression
+- Expansion
+- Structural changes
+- Developing setups
+
+Rank opportunities using transparent evidence-based scoring.
+
+### ENGINE 02 — APEX SNIPER PRECISION X
+Identify potential high-quality entry zones using:
+- Market structure
+- Liquidity
+- Order blocks
+- Fair value gaps
+- Breaker blocks
+- Retests
+- Rejection candles
+- Momentum
+- Volume confirmation
+- Multi-timeframe alignment
+
+Generate conditional entry plans and invalidation levels.
+
+### ENGINE 03 — APEX MARKET DNA X
+Compare current market conditions with historical market states.
+
+Analyse:
+- Recurring patterns
+- Similar candle sequences
+- Volatility behaviour
+- Session behaviour
+- Structure development
+- Liquidity reactions
+- Historical setup outcomes
+
+Show similar historical examples and their actual outcomes.
+
+### ENGINE 04 — APEX AI DEBATE CHAMBER
+Allow specialist AI agents to independently investigate the same opportunity.
+
+Produce:
+- Bullish argument
+- Bearish argument
+- Liquidity interpretation
+- Volume interpretation
+- Macro interpretation
+- Risk assessment
+- Verification report
+- Chief Analyst verdict
+
+The system must preserve disagreements instead of forcing artificial consensus.
+
+### ENGINE 05 — APEX LIQUIDITY WARFARE X
+Detect and investigate:
+- Equal highs and lows
+- Liquidity pools
+- Stop-run behaviour
+- Liquidity sweeps
+- Swing failures
+- Absorption
+- Liquidity replenishment where data permits
+- Sweep recovery
+- Potential liquidity destinations
+
+### ENGINE 06 — APEX BREAKOUT HUNTER X
+Investigate:
+- Range compression
+- Breakout pressure
+- Momentum acceleration
+- Volume expansion
+- Breakout acceptance
+- Retest quality
+- Fakeout behaviour
+- Failed breakouts
+
+### ENGINE 07 — APEX REVERSAL HUNTER X
+Detect:
+- Exhaustion
+- Divergence
+- Liquidity sweeps
+- Swing failure patterns
+- Rejection candles
+- Structural changes
+- Momentum deterioration
+- Reversal confirmation
+
+### ENGINE 08 — APEX SETUP AUTOPILOT X
+Monitor setup development and lifecycle.
+
+Automatically:
+- Discover potential setups
+- Track confirmation conditions
+- Draw chart levels
+- Update setup status
+- Detect invalidation
+- Expire outdated setups
+- Notify users of changes
+
+Autonomous monitoring does not automatically authorise trade execution.
+
+### ENGINE 09 — APEX QUANT LAB X
+Include:
+- Historical backtesting
+- Walk-forward testing
+- Monte Carlo analysis
+- Parameter optimisation
+- Drawdown analysis
+- Expectancy calculations
+- Out-of-sample validation
+- Strategy degradation monitoring
+- Transaction cost modelling
+
+### ENGINE 10 — APEX COMMAND INTELLIGENCE X
+Coordinate the specialist engines through a central intelligence controller.
+
+### ENGINE 11 — APEX MARKET MEMORY CORE
+Maintain a searchable history of market conditions, investigations, setups and outcomes.
+
+### ENGINE 12 — CROSS-MARKET INTELLIGENCE RADAR
+Study relationships between:
+- Gold
+- US dollar
+- Major forex pairs
+- Bitcoin
+- Equity indices
+- Commodities
+- Other configured instruments
+
+### ENGINE 13 — MULTI-SCENARIO PREDICTION ENGINE
+Generate conditional bullish, bearish and neutral scenarios.
+
+Each scenario must include evidence, conditions, invalidation and uncertainty.
+
+### ENGINE 14 — AI EVIDENCE VERIFICATION SYSTEM
+Check whether an AI-generated conclusion is supported by actual market data.
+
+### ENGINE 15 — LIQUIDITY DESTINATION PREDICTOR
+Map nearby liquidity areas and calculate conditional pathways towards them.
+
+### ENGINE 16 — MARKET REGIME SWITCHING INTELLIGENCE
+Classify market environments:
+- Trending
+- Ranging
+- Expanding
+- Contracting
+- High volatility
+- Low volatility
+- Transitioning
+- Event-driven
+
+### ENGINE 17 — LIVE-TO-HISTORICAL COMPARISON
+Compare live market conditions with historical analogues.
+
+### ENGINE 18 — NEWS IMPACT INTELLIGENCE
+Connect economic, financial and geopolitical developments to market behaviour.
+
+### ENGINE 19 — DYNAMIC RISK GUARDIAN
+Evaluate trading risk, market conditions, exposure and execution readiness.
+
+### ENGINE 20 — STRATEGY EVOLUTION LABORATORY
+Compare strategy versions and evaluate whether performance is improving or deteriorating.
+
+### ENGINE 21 — MULTI-AI SPECIALIST COUNCIL
+Coordinate several AI models and specialist agents.
+
+### ENGINE 22 — SETUP LIFECYCLE INTELLIGENCE
+Track every setup from development to confirmation, invalidation or expiry.
+
+### ENGINE 23 — GLOBAL OPPORTUNITY COMPETITION ARENA
+Rank competing opportunities using configurable quality and risk criteria.
+
+### ENGINE 24 — AUTONOMOUS CHART ARCHITECT
+Generate and maintain technical chart annotations.
+
+### ENGINE 25 — SELF-AUDIT AND INTELLIGENCE MONITOR
+Detect broken integrations, contradictory outputs, stale data, failed agents and calculation errors.
+
+# 7. ADDITIONAL VIP INTELLIGENCE ENGINES
+
+Implement these additional modules:
+
+26. APEX Market Causality Graph — connect market events, instruments and observed reactions.
+
+27. Signal Forensics Recorder — reconstruct why every setup was generated.
+
+28. Adaptive Data Confidence Engine — evaluate feed freshness, completeness and consistency.
+
+29. Liquidity Path Simulator — simulate conditional paths towards liquidity zones.
+
+30. Opportunity Collision Manager — identify duplicate opportunities and overlapping exposure.
+
+31. Execution Microstructure Laboratory — analyse spreads, slippage, latency and fill quality.
+
+32. Strategy Shadow Mode — monitor strategy signals without placing real trades.
+
+33. Intelligent Model Router — choose suitable AI models for individual tasks.
+
+34. Portfolio Stress-Test Chamber — simulate hypothetical market shocks and portfolio exposure.
+
+35. Natural Language Strategy Architect — convert user instructions into structured scanner rules and test specifications.
+
+36. APEX Ghost Monitor — monitor markets in the background.
+
+37. Opportunity Before Formation — identify developing conditions before a complete setup exists.
+
+38. AI Mission Controller — assign tasks to specialist agents.
+
+39. Market Shock Detector — identify abnormal volatility, gaps and sudden market behaviour.
+
+40. Predictive Market Memory — retrieve historical conditions relevant to current markets.
+
+41. Multi-Timeframe Conflict Resolver — identify and explain timeframe disagreements.
+
+42. Entry Zone Optimisation Engine — compare alternative entry zones.
+
+43. Scenario Probability Laboratory — calculate historical conditional frequencies and calibrated estimates.
+
+44. Liquidity Trap Intelligence — investigate failed sweeps and liquidity traps.
+
+45. Dynamic Trade Plan Rebuilder — update conditional plans while preserving previous versions.
+
+46. AI Specialist Competition — compare independent agent conclusions.
+
+47. AI Confidence Auditor — challenge unsupported confidence levels.
+
+48. Autonomous Research Bureau — conduct scheduled research tasks.
+
+49. Contradiction Intelligence Engine — detect conflicting evidence.
+
+50. AI Strategy Evolution Council — review strategy performance and proposed changes.
+
+51. Global Risk Command — consolidate instrument and portfolio exposure.
+
+52. Event Reaction Simulator — compare historical reactions to similar events.
+
+53. Personal Trading Intelligence — learn user-defined watchlists, strategy preferences and research priorities.
+
+54. J.A.X Voice Command Pro — enable natural language commands.
+
+55. Autonomous Operations Director — coordinate approved background activities.
+
+# 8. NEWS INTELLIGENCE CENTRE — 25 SPECIALIST FEATURES
+
+Build a dedicated professional news intelligence ecosystem.
+
+### NEWS DISCOVERY
+
+56. APEX Breaking News Radar
+- Monitor connected news sources.
+- Detect breaking developments.
+- Prioritise relevant events.
+- Identify affected markets.
+- Display original source and publication time.
+
+57. Global Event Intelligence Scanner
+- Monitor geopolitical events.
+- Government announcements.
+- Central bank decisions.
+- Economic developments.
+- Financial market events.
+
+58. News Verification Laboratory
+- Compare independent sources.
+- Detect conflicting reports.
+- Identify syndicated duplicates.
+- Distinguish confirmed information from rumours.
+
+59. Market Sentiment Intelligence
+- Analyse the language and context of market news.
+- Categorise sentiment by instrument.
+- Track changes in sentiment.
+
+60. AI News Investigator
+- Explain what happened.
+- Explain why it matters.
+- Identify affected markets.
+- Separate facts from interpretation.
+
+### MARKET IMPACT
+
+61. News-to-Market Impact Mapper
+Map relevant developments to:
+- XAUUSD
+- DXY
+- EURUSD
+- GBPUSD
+- USDJPY
+- BTCUSD
+- US30
+- NAS100
+- Other configured instruments.
+
+62. Economic Surprise Detector
+Compare:
+- Actual results
+- Forecast
+- Previous release
+- Revised previous release
+
+63. Central Bank Intelligence
+Monitor:
+- Interest-rate decisions
+- Policy statements
+- Speeches
+- Inflation commentary
+- Monetary policy expectations
+
+64. Geopolitical Risk Radar
+Monitor:
+- Conflicts
+- Sanctions
+- Trade disputes
+- Political instability
+- International policy developments
+
+65. News Volatility Predictor
+Estimate potential volatility conditions using historical event reactions and current market data.
+
+### PREDICTIVE NEWS INTELLIGENCE
+
+66. Historical News Reaction Database
+Store historical event information and subsequent instrument reactions.
+
+67. News Scenario Simulator
+Build bullish, bearish and neutral conditional scenarios before major events.
+
+68. Event Timeline Intelligence
+Display upcoming events, breaking developments, announcements and historical reactions.
+
+69. News Narrative Tracker
+Track how a developing story changes over time.
+
+70. Emerging Event Early Warning
+Identify developing news themes from connected and permitted information sources.
+
+### NEWS AND TRADING INTEGRATION
+
+71. News-to-Setup Generator
+Combine event intelligence with actual technical market conditions to generate conditional trading plans.
+
+72. Live News Chart Overlay
+Display news events and economic announcements on connected charts.
+
+73. News Risk Guardian
+Warn about:
+- Upcoming high-impact events
+- Existing trade exposure
+- Potential spread expansion
+- Volatility changes
+- Execution risks
+
+74. News-Price Divergence Detector
+Identify when observed market behaviour contradicts apparent news sentiment.
+
+75. Cross-Market News Reaction Scanner
+Compare how different instruments respond to the same event.
+
+### AUTONOMOUS NEWS AGENTS
+
+76. Multi-AI News Debate Chamber
+Use macro, geopolitical, sentiment, technical and risk agents to investigate developments.
+
+77. Autonomous News Watchers
+Allow users to configure continuous monitoring of topics, instruments, central banks and events.
+
+78. Personalised Market News Feed
+Prioritise developments based on user-selected instruments and interests.
+
+79. Intelligent News Escalation
+Send notifications based on relevance, urgency and affected markets.
+
+80. APEX Daily Intelligence Briefing
+Produce a daily report containing:
+- Overnight developments
+- Major economic events
+- Central bank updates
+- Geopolitical developments
+- Instrument-specific impact
+- Market conditions
+- Important trading risks
+- Conditional scenarios
+
+# 9. NEWS AI SPECIALIST TEAM
+
+Create dedicated agents:
+
+- News Discovery AI
+- News Verification AI
+- Macro Intelligence AI
+- Geopolitical Intelligence AI
+- Market Sentiment AI
+- Market Impact AI
+- Historical News AI
+- Chief News Analyst
+
+The Chief News Analyst must distinguish confirmed facts from speculation and must not invent the market impact of an event.
+
+Every news investigation must retain:
+- Source name
+- Original article link
+- Publication timestamp
+- Retrieval timestamp
+- Event timestamp, if different
+- Instrument relevance
+- Source confidence
+- Verification status
+- AI interpretation
+- Historical comparisons
+
+# 10. MULTI-AI ARCHITECTURE
+
+J.A.X. MUST NOT DEPEND ON ONE AI MODEL.
+
+Create a provider-independent architecture supporting multiple AI services.
+
+Allow administrators to configure available providers and models through secure API settings.
+
+Build these specialist agents:
+
+1. JAX Structure AI
+2. Liquidity AI
+3. Volume AI
+4. Pattern AI
+5. News AI
+6. Macro AI
+7. Risk AI
+8. Prediction AI
+9. Historical Research AI
+10. Chart Vision AI
+11. Verification AI
+12. Chief Analyst AI
+
+Each agent must have:
+- Defined responsibilities
+- Model/provider configuration
+- Input requirements
+- Structured output format
+- Confidence assessment
+- Evidence references
+- Error handling
+- Execution limits
+- Audit history
+
+### CHIEF ANALYST
+
+The Chief Analyst coordinates all specialist agents.
+
+It must:
+- Review their conclusions.
+- Identify conflicting evidence.
+- Request additional investigation.
+- Reject unsupported conclusions.
+- Distinguish missing evidence from negative evidence.
+- Produce the final intelligence report.
+
+A high average agent score must never override a critical risk or verification failure.
+
+# 11. MARKET SETUP GENERATOR
+
+Build a professional setup generation engine.
+
+Support:
+- Breakout and retest
+- Liquidity sweep
+- Reversal
+- Trend continuation
+- Order block reaction
+- Fair value gap reaction
+- Support and resistance
+- Supply and demand
+- Session high/low reaction
+- Range expansion
+- Momentum continuation
+
+Every generated setup must display:
+
+- Instrument
+- Direction
+- Setup type
+- Entry price or zone
+- Stop loss
+- Take profit 1
+- Take profit 2
+- Take profit 3
+- Risk-to-reward ratios
+- Timeframe
+- Higher-timeframe bias
+- Setup score
+- Evidence
+- Confirmation requirements
+- Invalidation conditions
+- Expiration conditions
+- Data quality status
+- News exposure
+- AI investigation summary
+
+Support both developing and confirmed setup states.
+
+Do not describe a developing setup as a confirmed trading signal.
+
+# 12. ENTRY PRECISION LAB
+
+Create an advanced entry investigation environment.
+
+Analyse:
+- Entry-zone width
+- Distance to invalidation
+- Nearby liquidity
+- Volatility-adjusted stops
+- Candle confirmation
+- Spread conditions
+- Timeframe alignment
+- Historical entry performance
+- Alternative entry prices
+
+Compare multiple entry candidates and explain their trade-offs.
+
+# 13. CHART INTELLIGENCE
+
+Build an interactive chart analysis system.
+
+Support:
+- Live connected charts
+- Uploaded chart screenshots
+- Candlestick analysis
+- Multi-timeframe analysis
+- Technical annotations
+- Historical comparisons
+- Chart replay
+
+Automatic drawings:
+- Entry zones
+- Stop loss
+- TP1, TP2 and TP3
+- Support and resistance
+- Supply and demand
+- Order blocks
+- Fair value gaps
+- Liquidity pools
+- Equal highs and lows
+- BOS
+- CHoCH
+- Swing highs and lows
+- Invalidation lines
+- Session ranges
+- News markers
+
+Every drawing must be linked to the underlying analysis and be editable by the user.
+
+For screenshot analysis, distinguish visible information from unavailable data. Never claim to have live volume or tick information from a static screenshot.
+
+# 14. MARKET WATCH TOWER
+
+Build a dedicated 24/7 monitoring centre.
+
+Include:
+- Multi-instrument monitoring
+- Multi-timeframe monitoring
+- Live market condition tracking
+- Developing opportunity alerts
+- Market anomaly detection
+- Volatility alerts
+- Liquidity events
+- News alerts
+- Setup status monitoring
+- Data connection health
+- AI agent status
+
+Provide configurable monitoring rules and notification priorities.
+
+# 15. HISTORICAL INTELLIGENCE
+
+Implement:
+
+- Candle Behaviour Archive
+- Setup Outcome Database
+- Market Regime Timeline
+- Historical Volatility Atlas
+- Session Behaviour Archive
+- Setup Expectancy Explorer
+- Market Reaction Benchmark
+- Strategy Degradation Detector
+- Walk-Forward Research Studio
+- Market Pattern Evolution Tracker
+
+Store setup outcomes and compare them by:
+- Instrument
+- Timeframe
+- Setup type
+- Session
+- Volatility regime
+- Direction
+- Entry model
+- Confirmation type
+
+Use realistic spread, commission, slippage and execution assumptions.
+
+Prevent look-ahead bias and data leakage.
+
+# 16. AUTONOMOUS SCANNER NETWORK
+
+Create a network of independent monitoring agents.
+
+Required modules:
+
+- Continuous Setup Watcher
+- Scanner Scheduling Matrix
+- Conditional Alert Composer
+- Opportunity Escalation System
+- Market Event Response Engine
+- Multi-Market Monitoring Grid
+- Setup Lifecycle Manager
+- Scanner Health Monitor
+- Duplicate Signal Eliminator
+- Intelligent Notification Router
+
+Allow the user to assign agents to specific markets and monitoring tasks.
+
+Every agent must report its current state, last successful execution, errors and data freshness.
+
+# 17. RISK COMMAND CENTRE
+
+Build professional risk analysis.
+
+Include:
+- Risk per trade
+- Position sizing
+- Stop-distance calculations
+- Account exposure
+- Correlation exposure
+- Daily drawdown
+- Maximum drawdown
+- Portfolio risk
+- News risk
+- Volatility risk
+- Execution risk
+- Maximum concurrent positions
+- Daily loss limits
+- Equity protection
+
+Allow configurable account and broker specifications.
+
+The risk engine must be deterministic and independently validated. AI must not be allowed to bypass risk controls.
+
+# 18. MT5 INTEGRATION
+
+Create a real MetaTrader 5 integration architecture.
+
+Support:
+- MT5 terminal connectivity through a secure bridge
+- Account information
+- Balance and equity
+- Open positions
+- Pending orders
+- Historical trades
+- Symbol specifications
+- Bid/ask prices
+- Market candles
+- EA connection status
+- Signal transmission
+- Execution acknowledgements
+
+Create an MT5 integration control panel.
+
+Provide:
+- Connection status
+- Account identifier display with appropriate privacy controls
+- Broker information
+- Server information
+- EA status
+- Last heartbeat
+- Last received price
+- Last transmitted signal
+- Execution history
+- Error logs
+
+Use authenticated communication, signed requests, unique request IDs and replay protection.
+
+Never expose broker passwords or API secrets in frontend code.
+
+# 19. EXECUTION PERMISSION SYSTEM
+
+Create three modes:
+
+**MODE 1 — ANALYSIS ONLY**
+The system researches and generates trading plans. It cannot place trades.
+
+**MODE 2 — MANUAL APPROVAL**
+The system prepares an order and requires user approval before execution.
+
+**MODE 3 — AUTHORISED AUTOMATION**
+An explicitly authorised integration may execute trades within configured risk limits.
+
+Default to ANALYSIS ONLY.
+
+All execution must pass:
+- Account validation
+- Instrument validation
+- Price freshness checks
+- Risk checks
+- Position-limit checks
+- Spread checks
+- Duplicate-order prevention
+- User permission checks
+
+Include a global emergency stop.
+
+# 20. API AND DATA CONNECTION CENTRE
+
+Build a provider-independent connection manager.
+
+Support configurable integrations for:
+
+- Market data
+- News
+- Economic calendars
+- AI models
+- Chart data
+- Broker connectivity
+- Notifications
+- Voice services
+
+Each connection must display:
+- Provider
+- Service category
+- Connection status
+- Last successful request
+- Rate-limit status
+- Error status
+- Usage information
+- Credential status
+
+Allow administrators to add, edit, test, disable and remove API connections.
+
+Use secure backend secret storage. Never ask users to paste secrets into public prompts, public databases or frontend code.
+
+Do not hardcode fictional API keys or claim a provider is free without verifying its current terms.
+
+# 21. VOICE COMMAND CENTRE
+
+Implement a natural-language voice interface.
+
+Example commands:
+
+- "JAX, scan gold."
+- "Investigate Bitcoin."
+- "Find developing opportunities."
+- "Show me the strongest bullish setups."
+- "What is happening with the dollar?"
+- "Investigate today's high-impact news."
+- "Compare gold with the dollar."
+- "Explain this trading setup."
+- "Monitor this instrument."
+- "Show my current risk exposure."
+- "Give me the daily market briefing."
+
+Voice must support confirmation for consequential actions.
+
+Never interpret a voice command as permission to execute a financial transaction unless the required execution permissions are already configured and the action is explicitly authorised.
+
+# 22. ALERT AND NOTIFICATION SYSTEM
+
+Support:
+- In-app alerts
+- Desktop notifications
+- Email notifications
+- Mobile push notifications
+- Telegram integration where configured
+- Configurable webhook destinations
+
+Alert categories:
+- New opportunity
+- Setup confirmation
+- Setup invalidation
+- Entry-zone approach
+- TP reached
+- SL reached
+- News release
+- Market shock
+- Volatility expansion
+- Risk warning
+- MT5 disconnection
+- Data failure
+- Agent failure
+
+Allow notification priority, escalation and duplicate suppression.
+
+# 23. DATABASE ARCHITECTURE
+
+Design a structured database containing:
+
+- Users
+- Roles
+- Permissions
+- User preferences
+- Instruments
+- Market data
+- Candles
+- Timeframes
+- Market sessions
+- Technical levels
+- Market regimes
+- Opportunities
+- Trading setups
+- Setup versions
+- Setup evidence
+- Setup lifecycle events
+- AI agents
+- AI providers
+- AI investigations
+- AI responses
+- Agent disagreements
+- News articles
+- News sources
+- Economic events
+- News-market relationships
+- Historical analogues
+- Backtests
+- Strategy versions
+- Performance statistics
+- Risk assessments
+- Broker accounts
+- MT5 connections
+- Orders
+- Positions
+- Execution acknowledgements
+- Alerts
+- Notifications
+- API connections
+- System events
+- Audit logs
+
+Use appropriate indexes, access policies, retention policies and database constraints.
+
+# 24. SYSTEM SECURITY
+
+Implement:
+
+- Secure authentication
+- Role-based permissions
+- Multi-factor authentication where supported
+- Server-side API key storage
+- Encrypted sensitive information
+- Input validation
+- Request authentication
+- Rate limiting
+- Audit logging
+- Session security
+- Secure webhook verification
+- Access separation between users
+- Data backup and recovery
+- Global emergency shutdown
+
+No API secret, broker credential or private account information may be exposed through public frontend requests or logs.
+
+# 25. PERFORMANCE OBSERVATORY
+
+Create a complete system performance dashboard.
+
+Track:
+- Scanner execution time
+- AI response time
+- Agent success rate
+- Data-feed latency
+- Failed requests
+- API usage
+- Setup generation frequency
+- Setup outcomes
+- Alert delivery success
+- MT5 heartbeat
+- Integration failures
+- Database performance
+
+Include detailed logs and investigation tools.
+
+# 26. IMPLEMENTATION ARCHITECTURE
+
+Use a modular, scalable architecture.
+
+Separate:
+
+1. Frontend application
+2. Backend API
+3. Market data ingestion
+4. News ingestion
+5. Economic calendar ingestion
+6. Technical analysis engine
+7. Setup generation engine
+8. Risk engine
+9. AI orchestration layer
+10. Historical research service
+11. Alert service
+12. MT5 bridge
+13. Authentication and permissions
+14. Database and storage
+15. Monitoring and logging
+
+Use event-driven processing for market updates and setup lifecycle changes where supported.
+
+Implement clear service boundaries and typed interfaces.
+
+If the chosen development platform cannot support a required service natively, implement a compatible external backend or integration rather than presenting a non-functional placeholder as complete.
+
+# 27. BUILD MILESTONES
+
+Develop the system in these phases.
+
+**PHASE 1 — FOUNDATION**
+- Application structure
+- Authentication
+- Database
+- Main navigation
+- Visual design system
+- User settings
+
+**PHASE 2 — LIVE MARKET DATA**
+- Provider configuration
+- Market data ingestion
+- Instrument watchlists
+- Candle storage
+- Data quality monitoring
+
+**PHASE 3 — TECHNICAL INTELLIGENCE**
+- Market structure
+- Liquidity
+- Volatility
+- Sessions
+- Market regime
+- Setup generator
+
+**PHASE 4 — MULTI-AI INTELLIGENCE**
+- Provider abstraction
+- Specialist agents
+- AI debate chamber
+- Chief Analyst
+- Evidence verification
+
+**PHASE 5 — NEWS INTELLIGENCE**
+- News ingestion
+- Economic calendar
+- Verification
+- Market impact
+- Historical reactions
+- News risk integration
+
+**PHASE 6 — HISTORICAL RESEARCH**
+- Historical database
+- Backtesting
+- Walk-forward testing
+- Monte Carlo
+- Strategy evaluation
+
+**PHASE 7 — MT5 AND EXECUTION**
+- MT5 bridge
+- Account monitoring
+- Signal transmission
+- Manual approvals
+- Risk controls
+- Execution logs
+
+**PHASE 8 — AUTONOMOUS OPERATIONS**
+- Background agents
+- Continuous monitoring
+- Notifications
+- Voice commands
+- Mission controller
+
+**PHASE 9 — ADVANCED VIP ECOSYSTEM**
+- Market DNA
+- Causality graph
+- Liquidity simulation
+- Scenario laboratory
+- Strategy evolution
+- Performance observatory
+
+# 28. NON-NEGOTIABLE DEVELOPMENT RULES
+
+1. Build functional software, not a visual-only prototype.
+2. Do not create fake live data.
+3. Do not fabricate AI investigations.
+4. Do not invent news sources or economic events.
+5. Do not use one AI model as the entire intelligence system.
+6. Keep calculations and risk controls deterministic.
+7. Require actual data before making live-market claims.
+8. Label unavailable integrations clearly.
+9. Preserve historical setup versions and audit trails.
+10. Never use future information in historical backtests.
+11. Separate scenario analysis from confirmed trading signals.
+12. Do not treat AI confidence scores as proven win probabilities.
+13. Require technical confirmation before news-driven setup generation.
+14. Prevent duplicate or conflicting trade execution.
+15. Keep execution disabled by default.
+16. Make every major module independently testable.
+17. Design for future providers and additional instruments.
+18. Build responsive desktop and mobile experiences.
+19. Use secure backend integrations.
+20. Never claim a feature is completed unless it has been implemented and tested.
+
+# 29. FINAL ACCEPTANCE TESTS
+
+The platform is not complete until the following can be demonstrated:
+
+- A user can sign in securely.
+- The user can configure instruments.
+- A connected provider can deliver real market data.
+- The platform identifies and displays market conditions.
+- The setup engine produces reproducible structured results.
+- Chart annotations correspond to actual calculations.
+- Specialist AI agents can investigate an opportunity.
+- The Chief Analyst can identify disagreements.
+- News articles retain their original sources and timestamps.
+- Economic releases retain actual, forecast and previous values.
+- News intelligence can be linked to affected instruments.
+- Historical testing uses realistic assumptions.
+- The risk engine blocks prohibited orders.
+- MT5 connectivity can be verified through actual heartbeats.
+- Manual approval works before execution.
+- Alerts are delivered and recorded.
+- Background agents report their status.
+- API failures are visible.
+- User permissions are enforced.
+- Audit logs capture consequential actions.
+
+# 30. YOUR FIRST TASK
+
+Do not attempt to create every advanced module as an unfinished placeholder.
+
+Start by:
+
+1. Inspecting the development environment and its available capabilities.
+2. Choosing an architecture that the platform can actually support.
+3. Creating the complete application structure.
+4. Building the visual design system.
+5. Creating the database schema.
+6. Implementing authentication and permissions.
+7. Building the Global Command Centre.
+8. Creating the API and Data Connection Centre.
+9. Implementing the first working market-data integration.
+10. Demonstrating the first functional market scanner.
+
+Then continue milestone by milestone.
+
+For each milestone:
+- Implement the feature.
+- Connect its backend.
+- Test its behaviour.
+- Report what works.
+- Report what remains incomplete.
+- Identify external credentials or infrastructure required.
+- Preserve existing working functionality.
+
+**FINAL OBJECTIVE:**
+
+Build J.A.X. OMNIVERSE into a unified, multi-AI, continuously operating financial market intelligence ecosystem that investigates markets, discovers opportunities, analyses news, understands historical behaviour, generates conditional trading plans, manages risk, and connects securely to real trading infrastructure.
+
+**J.A.X. OMNIVERSE — ONE COMMAND CENTRE. MULTIPLE INTELLIGENCE ENGINES. TOTAL MARKET AWARENESS.**

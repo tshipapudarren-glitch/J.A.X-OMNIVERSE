@@ -1,0 +1,368 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net (Default Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Primitive Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidTimestamp(ts) {
+      return ts is timestamp && ts <= request.time;
+    }
+
+    // --- Validation Helpers ---
+    function isValidUserWorkspaceProfile(data) {
+      return data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 120 &&
+             data.role in ['analyst', 'risk_officer', 'admin'] &&
+             data.executionMode in ['ANALYSIS_ONLY', 'MANUAL_APPROVAL', 'AUTHORISED_AUTOMATION'] &&
+             data.emergencyStop is bool &&
+             data.accountBalance is number && data.accountBalance > 0 && data.accountBalance <= 1000000000 &&
+             data.riskPerTradePct is number && data.riskPerTradePct > 0 && data.riskPerTradePct <= 10 &&
+             data.maxDailyLossPct is number && data.maxDailyLossPct > 0 && data.maxDailyLossPct <= 50 &&
+             data.maxConcurrentPositions is int && data.maxConcurrentPositions >= 1 && data.maxConcurrentPositions <= 50 &&
+             (!('preferredInstruments' in data) || (data.preferredInstruments is string && data.preferredInstruments.size() <= 1000));
+    }
+
+    function isValidWatchlistInstrument(data) {
+      return data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.symbol is string && data.symbol.size() >= 1 && data.symbol.size() <= 24 &&
+             data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 80 &&
+             data.assetClass in ['CRYPTO', 'FOREX', 'COMMODITY', 'INDEX', 'EQUITY'] &&
+             data.providerId is string && data.providerId.size() >= 1 && data.providerId.size() <= 64 &&
+             data.providerSymbol is string && data.providerSymbol.size() >= 1 && data.providerSymbol.size() <= 40 &&
+             data.pipSize is number && data.pipSize > 0 && data.pipSize <= 1000 &&
+             data.contractSize is number && data.contractSize > 0 && data.contractSize <= 10000000 &&
+             data.enabled is bool;
+    }
+
+    function isValidApiConnectionConfig(data) {
+      return data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.providerName is string && data.providerName.size() >= 1 && data.providerName.size() <= 80 &&
+             data.category in ['MARKET_DATA', 'NEWS', 'CALENDAR', 'AI_MODEL', 'MT5_BRIDGE', 'NOTIFICATIONS', 'VOICE'] &&
+             data.baseUrl is string && data.baseUrl.size() <= 300 &&
+             data.status in ['CONNECTED', 'DISCONNECTED', 'ERROR', 'RATE_LIMITED'] &&
+             data.credentialConfigured is bool &&
+             (!('rateLimitInfo' in data) || (data.rateLimitInfo is string && data.rateLimitInfo.size() <= 120)) &&
+             (!('lastLatencyMs' in data) || (data.lastLatencyMs is int && data.lastLatencyMs >= 0 && data.lastLatencyMs <= 600000)) &&
+             (!('lastError' in data) || (data.lastError is string && data.lastError.size() <= 500)) &&
+             data.enabled is bool;
+    }
+
+    function isValidTradingSetup(data) {
+      return data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.instrument is string && data.instrument.size() >= 1 && data.instrument.size() <= 24 &&
+             data.direction in ['BULLISH', 'BEARISH', 'NEUTRAL'] &&
+             data.setupType is string && data.setupType.size() >= 1 && data.setupType.size() <= 80 &&
+             data.status in ['DEVELOPING', 'CONFIRMED', 'INVALIDATED', 'EXPIRED'] &&
+             data.timeframe is string && data.timeframe.size() >= 1 && data.timeframe.size() <= 16 &&
+             (!('higherTimeframeBias' in data) || (data.higherTimeframeBias is string && data.higherTimeframeBias.size() <= 40)) &&
+             data.entryZoneLow is number && data.entryZoneLow > 0 &&
+             data.entryZoneHigh is number && data.entryZoneHigh >= data.entryZoneLow &&
+             data.stopLoss is number && data.stopLoss > 0 &&
+             data.tp1 is number && data.tp1 > 0 &&
+             data.tp2 is number && data.tp2 > 0 &&
+             data.tp3 is number && data.tp3 > 0 &&
+             data.rr1 is number && data.rr1 >= 0 && data.rr1 <= 100 &&
+             data.score is int && data.score >= 0 && data.score <= 100 &&
+             data.evidenceSummary is string && data.evidenceSummary.size() <= 2000 &&
+             data.confirmationConditions is string && data.confirmationConditions.size() <= 1000 &&
+             data.invalidationConditions is string && data.invalidationConditions.size() <= 1000 &&
+             data.dataQualityStatus is string && data.dataQualityStatus.size() <= 80 &&
+             (!('newsExposure' in data) || (data.newsExposure is string && data.newsExposure.size() <= 300)) &&
+             (!('aiSummary' in data) || (data.aiSummary is string && data.aiSummary.size() <= 2000)) &&
+             data.version is int && data.version >= 1 && data.version <= 1000;
+    }
+
+    function isValidAiInvestigationReport(data) {
+      return data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.instrument is string && data.instrument.size() >= 1 && data.instrument.size() <= 24 &&
+             data.timeframe is string && data.timeframe.size() >= 1 && data.timeframe.size() <= 16 &&
+             data.regime is string && data.regime.size() >= 1 && data.regime.size() <= 80 &&
+             data.bullishArgument is string && data.bullishArgument.size() <= 3000 &&
+             data.bearishArgument is string && data.bearishArgument.size() <= 3000 &&
+             (!('liquidityInterpretation' in data) || (data.liquidityInterpretation is string && data.liquidityInterpretation.size() <= 2000)) &&
+             (!('volumeInterpretation' in data) || (data.volumeInterpretation is string && data.volumeInterpretation.size() <= 2000)) &&
+             (!('macroInterpretation' in data) || (data.macroInterpretation is string && data.macroInterpretation.size() <= 2000)) &&
+             data.riskAssessment is string && data.riskAssessment.size() <= 2000 &&
+             data.verificationReport is string && data.verificationReport.size() <= 2000 &&
+             data.chiefAnalystVerdict is string && data.chiefAnalystVerdict.size() <= 3000 &&
+             data.disagreements is string && data.disagreements.size() <= 2000 &&
+             data.confidenceScore is int && data.confidenceScore >= 0 && data.confidenceScore <= 100 &&
+             data.verified is bool &&
+             (!('modelRouterInfo' in data) || (data.modelRouterInfo is string && data.modelRouterInfo.size() <= 300));
+    }
+
+    function isValidAlertRecord(data) {
+      return data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.category is string && data.category.size() >= 1 && data.category.size() <= 64 &&
+             data.priority in ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] &&
+             data.instrument is string && data.instrument.size() <= 24 &&
+             data.title is string && data.title.size() >= 1 && data.title.size() <= 160 &&
+             data.message is string && data.message.size() >= 1 && data.message.size() <= 1000 &&
+             data.acknowledged is bool &&
+             data.sourceEngine is string && data.sourceEngine.size() >= 1 && data.sourceEngine.size() <= 80;
+    }
+
+    function isValidExecutionOrderRecord(data) {
+      return data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.instrument is string && data.instrument.size() >= 1 && data.instrument.size() <= 24 &&
+             data.direction in ['BUY', 'SELL'] &&
+             data.volumeLots is number && data.volumeLots > 0 && data.volumeLots <= 1000 &&
+             data.entryPrice is number && data.entryPrice > 0 &&
+             data.stopLoss is number && data.stopLoss > 0 &&
+             data.takeProfit is number && data.takeProfit > 0 &&
+             data.riskPercent is number && data.riskPercent >= 0 && data.riskPercent <= 10 &&
+             data.executionMode in ['ANALYSIS_ONLY', 'MANUAL_APPROVAL', 'AUTHORISED_AUTOMATION'] &&
+             data.status in ['BLOCKED', 'PENDING_APPROVAL', 'APPROVED', 'TRANSMITTED', 'REJECTED', 'CANCELLED'] &&
+             data.riskCheckPassed is bool &&
+             (!('rejectionReason' in data) || (data.rejectionReason is string && data.rejectionReason.size() <= 500)) &&
+             data.requestNonce is string && data.requestNonce.size() >= 8 && data.requestNonce.size() <= 128;
+    }
+
+    function isValidBacktestRunRecord(data) {
+      return data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.strategyName is string && data.strategyName.size() >= 1 && data.strategyName.size() <= 100 &&
+             data.instrument is string && data.instrument.size() >= 1 && data.instrument.size() <= 24 &&
+             data.timeframe is string && data.timeframe.size() >= 1 && data.timeframe.size() <= 16 &&
+             data.totalTrades is int && data.totalTrades >= 0 && data.totalTrades <= 100000 &&
+             data.winRatePct is number && data.winRatePct >= 0 && data.winRatePct <= 100 &&
+             data.profitFactor is number && data.profitFactor >= 0 && data.profitFactor <= 1000 &&
+             data.expectancyR is number && data.expectancyR >= -100 && data.expectancyR <= 100 &&
+             data.maxDrawdownPct is number && data.maxDrawdownPct >= 0 && data.maxDrawdownPct <= 100 &&
+             data.netReturnPct is number && data.netReturnPct >= -100 && data.netReturnPct <= 100000 &&
+             data.spreadAssumed is number && data.spreadAssumed >= 0 &&
+             data.slippageAssumed is number && data.slippageAssumed >= 0 &&
+             data.walkForwardPassed is bool;
+    }
+
+    function isValidAuditLogRecord(data) {
+      return data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.action is string && data.action.size() >= 1 && data.action.size() <= 120 &&
+             data.category is string && data.category.size() >= 1 && data.category.size() <= 64 &&
+             data.details is string && data.details.size() <= 1000 &&
+             data.severity in ['INFO', 'WARNING', 'CRITICAL'];
+    }
+
+    // --- Collection Rules ---
+    match /users/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow list: if isOwner(userId);
+
+      allow create: if isOwner(userId) &&
+                       isValidId(userId) &&
+                       incoming().userId == request.auth.uid &&
+                       incoming().role == 'analyst' &&
+                       incoming().executionMode == 'ANALYSIS_ONLY' &&
+                       incoming().keys().hasAll(['userId', 'displayName', 'role', 'executionMode', 'emergencyStop', 'accountBalance', 'riskPerTradePct', 'maxDailyLossPct', 'maxConcurrentPositions', 'createdAt', 'updatedAt']) &&
+                       incoming().keys().hasOnly(['userId', 'displayName', 'role', 'executionMode', 'emergencyStop', 'accountBalance', 'riskPerTradePct', 'maxDailyLossPct', 'maxConcurrentPositions', 'preferredInstruments', 'createdAt', 'updatedAt']) &&
+                       isValidTimestamp(incoming().createdAt) &&
+                       isValidTimestamp(incoming().updatedAt) &&
+                       isValidUserWorkspaceProfile(incoming());
+
+      allow update: if isOwner(userId) &&
+                       isValidId(userId) &&
+                       isValidUserWorkspaceProfile(incoming()) &&
+                       incoming().userId == existing().userId &&
+                       incoming().role == existing().role &&
+                       incoming().createdAt == existing().createdAt &&
+                       isValidTimestamp(incoming().updatedAt) &&
+                       incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'executionMode', 'emergencyStop', 'accountBalance', 'riskPerTradePct', 'maxDailyLossPct', 'maxConcurrentPositions', 'preferredInstruments', 'updatedAt']);
+
+      allow delete: if false;
+
+      match /instruments/{instrumentId} {
+        allow get: if isOwner(userId) && isValidId(instrumentId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(instrumentId) &&
+                         incoming().userId == request.auth.uid &&
+                         incoming().keys().hasAll(['userId', 'symbol', 'displayName', 'assetClass', 'providerId', 'providerSymbol', 'pipSize', 'contractSize', 'enabled', 'createdAt', 'updatedAt']) &&
+                         incoming().keys().hasOnly(['userId', 'symbol', 'displayName', 'assetClass', 'providerId', 'providerSymbol', 'pipSize', 'contractSize', 'enabled', 'createdAt', 'updatedAt']) &&
+                         isValidTimestamp(incoming().createdAt) &&
+                         isValidTimestamp(incoming().updatedAt) &&
+                         isValidWatchlistInstrument(incoming());
+
+        allow update: if isOwner(userId) &&
+                         isValidId(instrumentId) &&
+                         isValidWatchlistInstrument(incoming()) &&
+                         incoming().userId == existing().userId &&
+                         incoming().createdAt == existing().createdAt &&
+                         isValidTimestamp(incoming().updatedAt) &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'providerId', 'providerSymbol', 'pipSize', 'contractSize', 'enabled', 'updatedAt']);
+
+        allow delete: if isOwner(userId) && isValidId(instrumentId);
+      }
+
+      match /connections/{connectionId} {
+        allow get: if isOwner(userId) && isValidId(connectionId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(connectionId) &&
+                         incoming().userId == request.auth.uid &&
+                         incoming().keys().hasAll(['userId', 'providerName', 'category', 'baseUrl', 'status', 'credentialConfigured', 'enabled', 'createdAt', 'updatedAt']) &&
+                         incoming().keys().hasOnly(['userId', 'providerName', 'category', 'baseUrl', 'status', 'credentialConfigured', 'rateLimitInfo', 'lastLatencyMs', 'lastError', 'enabled', 'createdAt', 'updatedAt']) &&
+                         isValidTimestamp(incoming().createdAt) &&
+                         isValidTimestamp(incoming().updatedAt) &&
+                         isValidApiConnectionConfig(incoming());
+
+        allow update: if isOwner(userId) &&
+                         isValidId(connectionId) &&
+                         isValidApiConnectionConfig(incoming()) &&
+                         incoming().userId == existing().userId &&
+                         incoming().createdAt == existing().createdAt &&
+                         isValidTimestamp(incoming().updatedAt) &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['providerName', 'baseUrl', 'status', 'credentialConfigured', 'rateLimitInfo', 'lastLatencyMs', 'lastError', 'enabled', 'updatedAt']);
+
+        allow delete: if isOwner(userId) && isValidId(connectionId);
+      }
+
+      match /setups/{setupId} {
+        allow get: if isOwner(userId) && isValidId(setupId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(setupId) &&
+                         incoming().userId == request.auth.uid &&
+                         incoming().keys().hasAll(['userId', 'instrument', 'direction', 'setupType', 'status', 'timeframe', 'entryZoneLow', 'entryZoneHigh', 'stopLoss', 'tp1', 'tp2', 'tp3', 'rr1', 'score', 'evidenceSummary', 'confirmationConditions', 'invalidationConditions', 'dataQualityStatus', 'version', 'createdAt', 'updatedAt']) &&
+                         incoming().keys().hasOnly(['userId', 'instrument', 'direction', 'setupType', 'status', 'timeframe', 'higherTimeframeBias', 'entryZoneLow', 'entryZoneHigh', 'stopLoss', 'tp1', 'tp2', 'tp3', 'rr1', 'score', 'evidenceSummary', 'confirmationConditions', 'invalidationConditions', 'dataQualityStatus', 'newsExposure', 'aiSummary', 'version', 'createdAt', 'updatedAt']) &&
+                         isValidTimestamp(incoming().createdAt) &&
+                         isValidTimestamp(incoming().updatedAt) &&
+                         isValidTradingSetup(incoming());
+
+        allow update: if isOwner(userId) &&
+                         isValidId(setupId) &&
+                         isValidTradingSetup(incoming()) &&
+                         incoming().userId == existing().userId &&
+                         incoming().createdAt == existing().createdAt &&
+                         isValidTimestamp(incoming().updatedAt) &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['status', 'entryZoneLow', 'entryZoneHigh', 'stopLoss', 'tp1', 'tp2', 'tp3', 'rr1', 'score', 'evidenceSummary', 'confirmationConditions', 'invalidationConditions', 'dataQualityStatus', 'newsExposure', 'aiSummary', 'version', 'updatedAt']);
+
+        allow delete: if isOwner(userId) && isValidId(setupId);
+      }
+
+      match /investigations/{investigationId} {
+        allow get: if isOwner(userId) && isValidId(investigationId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(investigationId) &&
+                         incoming().userId == request.auth.uid &&
+                         incoming().keys().hasAll(['userId', 'instrument', 'timeframe', 'regime', 'bullishArgument', 'bearishArgument', 'riskAssessment', 'verificationReport', 'chiefAnalystVerdict', 'disagreements', 'confidenceScore', 'verified', 'createdAt', 'updatedAt']) &&
+                         incoming().keys().hasOnly(['userId', 'instrument', 'timeframe', 'regime', 'bullishArgument', 'bearishArgument', 'liquidityInterpretation', 'volumeInterpretation', 'macroInterpretation', 'riskAssessment', 'verificationReport', 'chiefAnalystVerdict', 'disagreements', 'confidenceScore', 'verified', 'modelRouterInfo', 'createdAt', 'updatedAt']) &&
+                         isValidTimestamp(incoming().createdAt) &&
+                         isValidTimestamp(incoming().updatedAt) &&
+                         isValidAiInvestigationReport(incoming());
+
+        allow update: if false;
+        allow delete: if isOwner(userId) && isValidId(investigationId);
+      }
+
+      match /alerts/{alertId} {
+        allow get: if isOwner(userId) && isValidId(alertId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(alertId) &&
+                         incoming().userId == request.auth.uid &&
+                         incoming().keys().hasAll(['userId', 'category', 'priority', 'instrument', 'title', 'message', 'acknowledged', 'sourceEngine', 'createdAt', 'updatedAt']) &&
+                         incoming().keys().hasOnly(['userId', 'category', 'priority', 'instrument', 'title', 'message', 'acknowledged', 'sourceEngine', 'createdAt', 'updatedAt']) &&
+                         isValidTimestamp(incoming().createdAt) &&
+                         isValidTimestamp(incoming().updatedAt) &&
+                         isValidAlertRecord(incoming());
+
+        allow update: if isOwner(userId) &&
+                         isValidId(alertId) &&
+                         isValidAlertRecord(incoming()) &&
+                         incoming().userId == existing().userId &&
+                         incoming().createdAt == existing().createdAt &&
+                         isValidTimestamp(incoming().updatedAt) &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['acknowledged', 'updatedAt']);
+
+        allow delete: if isOwner(userId) && isValidId(alertId);
+      }
+
+      match /orders/{orderId} {
+        allow get: if isOwner(userId) && isValidId(orderId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(orderId) &&
+                         incoming().userId == request.auth.uid &&
+                         incoming().keys().hasAll(['userId', 'instrument', 'direction', 'volumeLots', 'entryPrice', 'stopLoss', 'takeProfit', 'riskPercent', 'executionMode', 'status', 'riskCheckPassed', 'requestNonce', 'createdAt', 'updatedAt']) &&
+                         incoming().keys().hasOnly(['userId', 'instrument', 'direction', 'volumeLots', 'entryPrice', 'stopLoss', 'takeProfit', 'riskPercent', 'executionMode', 'status', 'riskCheckPassed', 'rejectionReason', 'requestNonce', 'createdAt', 'updatedAt']) &&
+                         isValidTimestamp(incoming().createdAt) &&
+                         isValidTimestamp(incoming().updatedAt) &&
+                         isValidExecutionOrderRecord(incoming());
+
+        allow update: if isOwner(userId) &&
+                         isValidId(orderId) &&
+                         isValidExecutionOrderRecord(incoming()) &&
+                         !(existing().status in ['TRANSMITTED', 'REJECTED', 'CANCELLED']) &&
+                         incoming().userId == existing().userId &&
+                         incoming().requestNonce == existing().requestNonce &&
+                         incoming().createdAt == existing().createdAt &&
+                         isValidTimestamp(incoming().updatedAt) &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['status', 'rejectionReason', 'updatedAt']);
+
+        allow delete: if false;
+      }
+
+      match /backtests/{backtestId} {
+        allow get: if isOwner(userId) && isValidId(backtestId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(backtestId) &&
+                         incoming().userId == request.auth.uid &&
+                         incoming().keys().hasAll(['userId', 'strategyName', 'instrument', 'timeframe', 'totalTrades', 'winRatePct', 'profitFactor', 'expectancyR', 'maxDrawdownPct', 'netReturnPct', 'spreadAssumed', 'slippageAssumed', 'walkForwardPassed', 'createdAt', 'updatedAt']) &&
+                         incoming().keys().hasOnly(['userId', 'strategyName', 'instrument', 'timeframe', 'totalTrades', 'winRatePct', 'profitFactor', 'expectancyR', 'maxDrawdownPct', 'netReturnPct', 'spreadAssumed', 'slippageAssumed', 'walkForwardPassed', 'createdAt', 'updatedAt']) &&
+                         isValidTimestamp(incoming().createdAt) &&
+                         isValidTimestamp(incoming().updatedAt) &&
+                         isValidBacktestRunRecord(incoming());
+
+        allow update: if false;
+        allow delete: if isOwner(userId) && isValidId(backtestId);
+      }
+
+      match /audit_logs/{logId} {
+        allow get: if isOwner(userId) && isValidId(logId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(logId) &&
+                         incoming().userId == request.auth.uid &&
+                         incoming().keys().hasAll(['userId', 'action', 'category', 'details', 'severity', 'createdAt']) &&
+                         incoming().keys().hasOnly(['userId', 'action', 'category', 'details', 'severity', 'createdAt']) &&
+                         isValidTimestamp(incoming().createdAt) &&
+                         isValidAuditLogRecord(incoming());
+
+        allow update, delete: if false;
+      }
+    }
+  }
+}
